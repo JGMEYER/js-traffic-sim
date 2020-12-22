@@ -1,0 +1,119 @@
+:root {
+    --grid-width: 17; /* 15 */
+    --grid-height: 1; /* 25 */
+    --tile-width: 64px;
+    --tile-height: 64px;
+
+    --tile-poly-no-neighbor: polygon(25% 25%, 75% 25%, 75% 75%, 25% 75%);
+    --tile-poly-one-neighbor: polygon(25% 0%, 75% 0%, 75% 75%, 25% 75%);
+    --tile-poly-two-neighbors: polygon(25% 0%, 75% 0%, 75% 25%, 100% 25%, 100% 75%, 25% 75%);
+    --tile-poly-two-neighbors-straight: polygon(25% 0%, 75% 0%, 75% 100%, 25% 100%);
+    --tile-poly-three-neighbors: polygon(25% 0%, 75% 0%, 75% 25%, 100% 25%, 100% 75%, 75% 75%, 75% 100%, 25% 100%);
+    --tile-poly-four-neighbors: polygon(25% 0%, 75% 0%, 75% 25%, 100% 25%, 100% 75%, 75% 75%, 75% 100%, 25% 100%, 25% 75%, 0% 75%, 0% 25%, 25% 25%)
+}
+
+.grid-wrapper {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-width), var(--tile-width));
+    grid-template-rows: repeat(var(--grid-height), var(--tile-height));
+}
+
+.grid-tile {
+    color: #ff0000;
+    background-color: #00ff00;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.road-tile-descriptor {
+    color: #000000;
+    float: left;
+}
+
+.road-tile {
+    background-color: #000000;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    width: var(--tile-width);
+    height: var(--tile-height);
+}
+
+/* EMPTY */
+.road-tile0 {
+    clip-path: polygon(0 0);
+}
+/* ALONE */
+.road-tile1 {
+    clip-path: var(--tile-poly-no-neighbor);
+}
+/* UP */
+.road-tile2 {
+    clip-path: var(--tile-poly-one-neighbor);
+}
+/* RIGHT */
+.road-tile3 {
+    clip-path: var(--tile-poly-one-neighbor);
+    transform: rotate(90deg);
+}
+/* DOWN */
+.road-tile4 {
+    clip-path: var(--tile-poly-one-neighbor);
+    transform: rotate(180deg);
+}
+/* LEFT */
+.road-tile5 {
+    clip-path: var(--tile-poly-one-neighbor);
+    transform: rotate(270deg);
+}
+/* UP_RIGHT ╚ */
+.road-tile6 {
+    clip-path: var(--tile-poly-two-neighbors);
+}
+/* RIGHT_DOWN ╔ */
+.road-tile7 {
+    clip-path: var(--tile-poly-two-neighbors);
+    transform: rotate(90deg);
+}
+/* DOWN_LEFT ╗ */
+.road-tile8 {
+    clip-path: var(--tile-poly-two-neighbors);
+    transform: rotate(180deg);
+}
+/* UP_LEFT ╝ */
+.road-tile9 {
+    clip-path: var(--tile-poly-two-neighbors);
+    transform: rotate(270deg);
+}
+/* UP_DOWN ║ */
+.road-tile10 {
+    clip-path: var(--tile-poly-two-neighbors-straight);
+}
+/* RIGHT_LEFT ═ */
+.road-tile11 {
+    clip-path: var(--tile-poly-two-neighbors-straight);
+    transform: rotate(90deg);
+}
+/* UP_RIGHT_DOWN ╠ */
+.road-tile12 {
+    clip-path: var(--tile-poly-three-neighbors);
+}
+/* RIGHT_DOWN_LEFT  ╦ */
+.road-tile13 {
+    clip-path: var(--tile-poly-three-neighbors);
+    transform: rotate(90deg);
+}
+/* UP_DOWN_LEFT ╣ */
+.road-tile14 {
+    clip-path: var(--tile-poly-three-neighbors);
+    transform: rotate(180deg);
+}
+/* UP_RIGHT_LEFT ╩ */
+.road-tile15 {
+    clip-path: var(--tile-poly-three-neighbors);
+    transform: rotate(270deg);
+}
+/* UP_RIGHT_DOWN_LEFT ╬ */
+.road-tile16 {
+    clip-path: var(--tile-poly-four-neighbors);
+}
