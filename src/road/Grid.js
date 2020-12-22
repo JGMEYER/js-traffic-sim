@@ -1,3 +1,5 @@
+import React, { useState } from 'react';
+
 import './road.css';
 import { RoadTile, RoadTileType } from './RoadTile.js';
 
@@ -7,25 +9,40 @@ export function Grid() {
     const height = getComputedStyle(document.documentElement)
         .getPropertyValue('--grid-height');
 
-    const populateGridTiles = () => {
-        let gridTiles = [];
+    const populateRoadTiles = () => {
+        let roadTiles = new Array(height);
         for (let r = 0; r < height; r++) {
-            gridTiles.push([]);
+            roadTiles[r] = new Array(width);
+        }
+        for (let r = 0; r < height; r++) {
             for (let c = 0; c < width; c++) {
-                const idx = r * width + c;
-                gridTiles[r].push(
-                    <div className='grid-tile'>
-                        <RoadTile type={RoadTileType.EMPTY} />
-                    </div>
-                );
+                roadTiles[r][c] = <RoadTile type={RoadTileType.EMPTY} />;
             }
         }
-        return gridTiles;
+        return roadTiles;
     };
+
+    const [roadTiles, setRoadTiles] = useState(
+        populateRoadTiles()
+    );
+
+    const renderRoadTiles = () => {
+        let roadTileDivs = []
+        for (let r = 0; r < height; r++) {
+            for (let c = 0; c < width; c++) {
+                roadTileDivs.push((
+                    <div className='grid-tile'>
+                        {roadTiles[r][c]}
+                    </div>
+                ));
+            }
+        }
+        return roadTileDivs;
+    }
 
     return (
         <div className="grid-wrapper">
-            {populateGridTiles()}
+            {renderRoadTiles()}
         </div>
     );
 }
