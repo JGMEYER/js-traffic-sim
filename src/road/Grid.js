@@ -1,5 +1,5 @@
 import './road.css';
-import { RoadTile } from './RoadTile.js';
+import { RoadTile, RoadTileType } from './RoadTile.js';
 
 export function Grid() {
     const width = getComputedStyle(document.documentElement)
@@ -15,7 +15,7 @@ export function Grid() {
                 const idx = r * width + c;
                 gridTiles[r].push(
                     <div className='grid-tile'>
-                        <RoadTile type={idx} />
+                        <RoadTile type={RoadTileType.EMPTY} />
                     </div>
                 );
             }
