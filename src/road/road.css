@@ -9,7 +9,7 @@
     --tile-poly-two-neighbors: polygon(25% 0%, 75% 0%, 75% 25%, 100% 25%, 100% 75%, 25% 75%);
     --tile-poly-two-neighbors-straight: polygon(25% 0%, 75% 0%, 75% 100%, 25% 100%);
     --tile-poly-three-neighbors: polygon(25% 0%, 75% 0%, 75% 25%, 100% 25%, 100% 75%, 75% 75%, 75% 100%, 25% 100%);
-    --tile-poly-four-neighbors: polygon(25% 0%, 75% 0%, 75% 25%, 100% 25%, 100% 75%, 75% 75%, 75% 100%, 25% 100%, 25% 75%, 0% 75%, 0% 25%, 25% 25%)
+    --tile-poly-four-neighbors: polygon(25% 0%, 75% 0%, 75% 25%, 100% 25%, 100% 75%, 75% 75%, 75% 100%, 25% 100%, 25% 75%, 0% 75%, 0% 25%, 25% 25%);
 }
 
 .grid-wrapper {
@@ -26,9 +26,12 @@
     vertical-align: middle;
 }
 
-/* TODO needs work on layering */
 .road-tile-descriptor {
+    position: relative;
+    height: 100%;
+    width: 100%;
     color: #ff0000;
+    z-index: 1;
 }
 
 .road-tile {
