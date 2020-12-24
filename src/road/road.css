@@ -1,9 +1,6 @@
-:root {
-    --grid-width: 25;
-    --grid-height: 10;
-    --tile-width: 64px;
-    --tile-height: 64px;
+@import "../common/common.css";
 
+:root {
     --tile-poly-no-neighbor: polygon(25% 25%, 75% 25%, 75% 75%, 25% 75%);
     --tile-poly-one-neighbor: polygon(25% 0%, 75% 0%, 75% 75%, 25% 75%);
     --tile-poly-two-neighbors: polygon(25% 0%, 75% 0%, 75% 25%, 100% 25%, 100% 75%, 25% 75%);
