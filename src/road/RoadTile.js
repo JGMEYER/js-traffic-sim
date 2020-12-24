@@ -1,3 +1,4 @@
+import React from 'react';
 import './road.css';
 
 export const RoadTileType = {

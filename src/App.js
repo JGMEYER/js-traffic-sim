@@ -4,7 +4,7 @@ import { Grid } from './road/Grid.js'
 function App() {
   return (
     <div className="App">
-      <Grid />
+      <Grid rows='10' cols='25' />
     </div>
   );
 }

@@ -1,94 +1,168 @@
-import React, { useEffect, useState } from 'react';
-import { Direction } from '../common/common';
+import React from 'react';
 
 import './road.css';
-import { RoadTile, RoadTileType } from './RoadTile.js';
+import { RoadTile, RoadTileType } from './RoadTile';
+import { Direction } from '../common/common';
 
-export function Grid() {
-    const width = getComputedStyle(document.documentElement)
-        .getPropertyValue('--grid-width');
-    const height = getComputedStyle(document.documentElement)
-        .getPropertyValue('--grid-height');
+export class Grid extends React.Component {
+    constructor(props) {
+        super(props);
 
-    const [roadTiles, setRoadTiles] = useState([])
-    const [roadTileDivs, setRoadTileDivs] = useState([])
+        const roadTileTypes = new Array(props.rows);
+        for (let r = 0; r < props.rows; r++) {
+            roadTileTypes[r] = new Array(props.cols);
+        }
+        for (let r = 0; r < props.rows; r++) {
+            for (let c = 0; c < props.cols; c++) {
+                roadTileTypes[r][c] = RoadTileType.EMPTY;
+            }
+        }
 
-    const getNeighbors = (r, c) => {
+        this.state = {
+            roadTileTypes: roadTileTypes,
+        }
+    }
+
+    getNeighbors(r, c) {
         const neighbors = {};
-        if (r - 1 >= 0 && roadTiles[r - 1][c].type !== RoadTileType.EMPTY) {
+        if (r - 1 >= 0 && this.state.roadTileTypes[r - 1][c] !== RoadTileType.EMPTY) {
             neighbors[Direction.UP] = {
                 coords: [r - 1, c],
-                type: roadTiles[r - 1][c].type,
+                type: this.state.roadTileTypes[r - 1][c],
             }
         }
-        if (c + 1 < width && roadTiles[r][c + 1].type !== RoadTileType.EMPTY) {
+        if (c + 1 < this.props.cols && this.state.roadTileTypes[r][c + 1] !== RoadTileType.EMPTY) {
             neighbors[Direction.RIGHT] = {
                 coords: [r, c + 1],
-                type: roadTiles[r][c + 1].type,
+                type: this.state.roadTileTypes[r][c + 1],
             }
         }
-        if (r + 1 < height && roadTiles[r + 1][c].type !== RoadTileType.EMPTY) {
+        if (r + 1 < this.props.rows && this.state.roadTileTypes[r + 1][c] !== RoadTileType.EMPTY) {
             neighbors[Direction.DOWN] = {
                 coords: [r + 1, c],
-                type: roadTiles[r + 1][c].type,
+                type: this.state.roadTileTypes[r + 1][c],
             }
         }
-        if (c - 1 >= 0 && roadTiles[r][c - 1].type !== RoadTileType.EMPTY) {
+        if (c - 1 >= 0 && this.state.roadTileTypes[r][c - 1] !== RoadTileType.EMPTY) {
             neighbors[Direction.LEFT] = {
                 coords: [r, c - 1],
-                type: roadTiles[r][c - 1].type,
+                type: this.state.roadTileTypes[r][c - 1],
             }
         }
-        console.log(neighbors);
         return neighbors;
     }
 
-    const populateRoadTiles = () => {
-        const baseRoadTiles = new Array(height);
-        for (let r = 0; r < height; r++) {
-            baseRoadTiles[r] = new Array(width);
-        }
-        for (let r = 0; r < height; r++) {
-            for (let c = 0; c < width; c++) {
-                baseRoadTiles[r][c] = (
-                    <RoadTile type={RoadTileType.UP_RIGHT_DOWN_LEFT} />
-                );
-            }
-        }
-        setRoadTiles(baseRoadTiles);
-    };
+    evaluateRoadTileType(r, c, wasAdded) {
+        /* wasAdded: whether the road tile was newly added to the grid, i.e.
+                     changed from RoadTileType.EMPTY */
 
-    const populateRoadTileDivs = () => {
-        const baseRoadTileDivs = []
-        for (let r = 0; r < height; r++) {
-            for (let c = 0; c < width; c++) {
-                baseRoadTileDivs.push((
+        // Optimization: don't update empty spaces unless we recently added a
+        // tile there.
+        if (!wasAdded && this.state.roadTileTypes[r][c] === RoadTileType.EMPTY) {
+            return RoadTileType.EMPTY;
+        }
+
+        const neighbors = this.getNeighbors(r, c)
+        const numNeighbors = Object.keys(neighbors).length;
+        const up = typeof neighbors[Direction.UP] !== 'undefined';
+        const right = typeof neighbors[Direction.RIGHT] !== 'undefined';
+        const down = typeof neighbors[Direction.DOWN] !== 'undefined';
+        const left = typeof neighbors[Direction.LEFT] !== 'undefined';
+
+        if (numNeighbors === 0) {
+            return RoadTileType.ALONE;
+        } else if (numNeighbors === 1) {
+            if (up) {
+                return RoadTileType.UP;
+            } else if (right) {
+                return RoadTileType.RIGHT;
+            } else if (down) {
+                return RoadTileType.DOWN;
+            } else if (left) {
+                return RoadTileType.LEFT;
+            }
+        } else if (numNeighbors === 2) {
+            if (up && right) {
+                return RoadTileType.UP_RIGHT;
+            } else if (right && down) {
+                return RoadTileType.RIGHT_DOWN;
+            } else if (down && left) {
+                return RoadTileType.DOWN_LEFT;
+            } else if (up && left) {
+                return RoadTileType.UP_LEFT;
+            } else if (up && down) {
+                return RoadTileType.UP_DOWN;
+            } else if (right && left) {
+                return RoadTileType.RIGHT_LEFT;
+            }
+        } else if (numNeighbors === 3) {
+            if (up && right && down) {
+                return RoadTileType.UP_RIGHT_DOWN;
+            } else if (right && down && left) {
+                return RoadTileType.RIGHT_DOWN_LEFT;
+            } else if (up && down && left) {
+                return RoadTileType.UP_DOWN_LEFT;
+            } else if (up && right && left) {
+                return RoadTileType.UP_RIGHT_LEFT;
+            }
+        } else if (numNeighbors === 4) {
+            return RoadTileType.UP_RIGHT_DOWN_LEFT;
+        }
+    }
+
+    updateTileType(r, c, wasAdded) {
+        // Hack? - change and force re-render
+        this.state.roadTileTypes[r][c] = this.evaluateRoadTileType(r, c, wasAdded);
+        this.setState({ roadTileTypes: this.state.roadTileTypes });
+    }
+
+    addTile(r, c, restrict_to_neighbors) {
+        /* Add tile to grid
+        restrict_to_neighbors - only allow road to be placed next to an
+                                existing tile */
+        if (this.state.roadTileTypes[r][c] !== RoadTileType.EMPTY) {
+            return false;
+        }
+        if (restrict_to_neighbors && !Object.keys(this.getNeighbors(r, c)).length) {
+            return false;
+        }
+
+        this.updateTileType(r, c, true);
+
+        if (r - 1 >= 0) {
+            this.updateTileType(r - 1, c, false);
+        }
+        if (c + 1 < this.props.cols) {
+            this.updateTileType(r, c + 1, false);
+        }
+        if (r + 1 < this.props.rows) {
+            this.updateTileType(r + 1, c, false);
+        }
+        if (c - 1 >= 0) {
+            this.updateTileType(r, c - 1, false);
+        }
+
+        return true;
+    }
+
+    render() {
+        const roadTileDivs = []
+        for (let r = 0; r < this.props.rows; r++) {
+            for (let c = 0; c < this.props.cols; c++) {
+                roadTileDivs.push((
                     <div
-                        key={`grid-tile${r * width + c}`}
+                        key={`grid-tile${r * this.props.cols + c}`}
                         className='grid-tile'
-                        onClick={() => getNeighbors(r, c)}>
-                        {roadTiles[r][c]}
-                    </div>
+                        onMouseOver={() => this.addTile(r, c, false)}>
+                        <RoadTile type={this.state.roadTileTypes[r][c]} />
+                    </div >
                 ));
             }
         }
-        setRoadTileDivs(baseRoadTileDivs);
+        return (
+            <div className="grid-wrapper">
+                {roadTileDivs}
+            </div>
+        );
     }
-
-    useEffect(() => {
-        populateRoadTiles();
-    }, []);
-
-    useEffect(() => {
-        // ignore initial set* of roadTiles in useState()
-        if (roadTiles && roadTiles.length) {
-            populateRoadTileDivs();
-        }
-    }, [roadTiles]);
-
-    return (
-        <div className="grid-wrapper">
-            {roadTileDivs}
-        </div>
-    );
 }
