@@ -161,6 +161,16 @@ export class GridContainer extends React.Component {
 }
 
 class Grid extends React.Component {
+    mouseDownHandler(e, r, c) {
+        this.props.addTile(r, c, true);
+    }
+
+    mouseOverHandler({ buttons }, r, c) {
+        if (buttons === 1) {
+            this.props.addTile(r, c, true)
+        }
+    }
+
     render() {
         const roadTileDivs = []
         let rows = this.props.roadTileTypes.length;
@@ -171,7 +181,8 @@ class Grid extends React.Component {
                     <div
                         key={`grid-tile${r * cols + c}`}
                         className='grid-tile'
-                        onMouseOver={() => this.props.addTile(r, c, true)} >
+                        onMouseDown={(e) => this.mouseDownHandler(e, r, c)}
+                        onMouseOver={(e) => this.mouseOverHandler(e, r, c)} >
                         <RoadTile type={this.props.roadTileTypes[r][c]} />
                     </div >
                 ));
