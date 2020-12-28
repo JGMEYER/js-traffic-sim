@@ -4,7 +4,7 @@ import './road.css';
 import { RoadTile, RoadTileType } from './RoadTile';
 import { Direction } from '../common/common';
 
-export class Grid extends React.Component {
+export class GridContainer extends React.Component {
     constructor(props) {
         super(props);
 
@@ -21,6 +21,8 @@ export class Grid extends React.Component {
         this.state = {
             roadTileTypes: roadTileTypes,
         }
+
+        this.addTile = this.addTile.bind(this);
     }
 
     getNeighbors(r, c) {
@@ -146,15 +148,27 @@ export class Grid extends React.Component {
     }
 
     render() {
+        return <Grid
+            rows={this.props.rows}
+            cols={this.props.cols}
+            roadTileTypes={this.state.roadTileTypes}
+            addTile={this.addTile} />;
+    }
+}
+
+class Grid extends React.Component {
+    render() {
         const roadTileDivs = []
-        for (let r = 0; r < this.props.rows; r++) {
-            for (let c = 0; c < this.props.cols; c++) {
+        let rows = this.props.roadTileTypes.length;
+        for (let r = 0; r < rows; r++) {
+            let cols = this.props.roadTileTypes[r].length;
+            for (let c = 0; c < cols; c++) {
                 roadTileDivs.push((
                     <div
-                        key={`grid-tile${r * this.props.cols + c}`}
+                        key={`grid-tile${r * cols + c}`}
                         className='grid-tile'
-                        onMouseOver={() => this.addTile(r, c, false)}>
-                        <RoadTile type={this.state.roadTileTypes[r][c]} />
+                        onMouseOver={() => this.props.addTile(r, c, false)} >
+                        <RoadTile type={this.props.roadTileTypes[r][c]} />
                     </div >
                 ));
             }
