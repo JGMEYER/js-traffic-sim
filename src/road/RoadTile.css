@@ -9,26 +9,13 @@
     --tile-poly-four-neighbors: polygon(25% 0%, 75% 0%, 75% 25%, 100% 25%, 100% 75%, 75% 75%, 75% 100%, 25% 100%, 25% 75%, 0% 75%, 0% 25%, 25% 25%);
 }
 
-.grid-wrapper {
-    display: grid;
-    grid-template-columns: repeat(var(--grid-width), var(--tile-width));
-    grid-template-rows: repeat(var(--grid-height), var(--tile-height));
-}
-
-.grid-tile {
-    position: relative;
-    color: #ff0000;
-    background-color: #00ff00;
-    text-align: center;
-    vertical-align: middle;
-}
-
 .road-tile-descriptor {
     position: relative;
     height: 100%;
     width: 100%;
     color: #ff0000;
     z-index: 1;
+    font-size: 14px;
 }
 
 .road-tile {

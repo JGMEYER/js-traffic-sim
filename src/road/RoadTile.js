@@ -1,5 +1,5 @@
 import React from 'react';
-import './road.css';
+import './RoadTile.css';
 
 export const RoadTileType = {
     // no tile
@@ -25,7 +25,7 @@ export const RoadTileType = {
     UP_RIGHT_LEFT: 15,  // ╩
     // four neighbors
     UP_RIGHT_DOWN_LEFT: 16,  //  ╬
-}
+};
 Object.freeze(RoadTileType);
 
 export function RoadTile(props) {

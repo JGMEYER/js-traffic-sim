@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './road.css';
+import './Grid.css';
 import { RoadTile, RoadTileType } from './RoadTile';
 import { Direction } from '../common/common';
 
@@ -17,6 +17,10 @@ export class GridContainer extends React.Component {
                 roadTileTypes[r][c] = RoadTileType.EMPTY;
             }
         }
+
+        const middleRow = Math.floor(props.rows / 2)
+        const middleCol = Math.floor(props.cols / 2);
+        roadTileTypes[middleRow][middleCol] = RoadTileType.ALONE;
 
         this.state = {
             roadTileTypes: roadTileTypes,
@@ -167,7 +171,7 @@ class Grid extends React.Component {
                     <div
                         key={`grid-tile${r * cols + c}`}
                         className='grid-tile'
-                        onMouseOver={() => this.props.addTile(r, c, false)} >
+                        onMouseOver={() => this.props.addTile(r, c, true)} >
                         <RoadTile type={this.props.roadTileTypes[r][c]} />
                     </div >
                 ));
