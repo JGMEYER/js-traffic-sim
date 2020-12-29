@@ -13,3 +13,9 @@
     text-align: center;
     vertical-align: middle;
 }
+
+.grid-tile:hover {
+    /* add inner border */
+    box-sizing: border-box;
+    box-shadow: inset 0px 0px 0px 2px black;
+}
