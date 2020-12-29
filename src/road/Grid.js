@@ -117,9 +117,10 @@ export class GridContainer extends React.Component {
     }
 
     updateTileType(r, c, wasAdded) {
-        // Hack? - change and force re-render
-        this.state.roadTileTypes[r][c] = this.evaluateRoadTileType(r, c, wasAdded);
-        this.setState({ roadTileTypes: this.state.roadTileTypes });
+        // Supposedly a good-practice way to update an array in state
+        let roadTileTypesCopy = [...this.state.roadTileTypes];
+        roadTileTypesCopy[r][c] = this.evaluateRoadTileType(r, c, wasAdded);
+        this.setState({ roadTileTypes: roadTileTypesCopy });
     }
 
     addTile(r, c, restrict_to_neighbors) {
