@@ -2,8 +2,8 @@
 
 :root {
     --tile-poly-no-neighbor: polygon(25% 25%, 75% 25%, 75% 75%, 25% 75%);
-    --tile-poly-one-neighbor: polygon(25% 0%, 75% 0%, 75% 75%, 25% 75%);
-    --tile-poly-two-neighbors: polygon(25% 0%, 75% 0%, 75% 25%, 100% 25%, 100% 75%, 25% 75%);
+    --tile-poly-one-neighbor: polygon(25% 0%, 75% 0%, 75% 55%, 60% 75%, 40% 75%, 25% 55%);
+    --tile-poly-two-neighbors: polygon(25% 0%, 75% 0%, 75% 25%, 100% 25%, 100% 75%, 45% 75%, 25% 55%);
     --tile-poly-two-neighbors-straight: polygon(25% 0%, 75% 0%, 75% 100%, 25% 100%);
     --tile-poly-three-neighbors: polygon(25% 0%, 75% 0%, 75% 25%, 100% 25%, 100% 75%, 75% 75%, 75% 100%, 25% 100%);
     --tile-poly-four-neighbors: polygon(25% 0%, 75% 0%, 75% 25%, 100% 25%, 100% 75%, 75% 75%, 75% 100%, 25% 100%, 25% 75%, 0% 75%, 0% 25%, 25% 25%);
@@ -13,7 +13,7 @@
     position: relative;
     height: 100%;
     width: 100%;
-    color: #ff0000;
+    color: cyan;
     z-index: 1;
     font-size: 14px;
 }

@@ -1,6 +1,6 @@
 :root {
     --grid-width: 25;
     --grid-height: 10;
-    --tile-width: 64px;
-    --tile-height: 64px;
+    --tile-width: 48px;
+    --tile-height: 48px;
 }
