@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import './Grid.css';
 import { RoadTile, RoadTileType } from './RoadTile';
@@ -154,11 +155,14 @@ export class GridContainer extends React.Component {
 
     render() {
         return <Grid
-            rows={this.props.rows}
-            cols={this.props.cols}
             roadTileTypes={this.state.roadTileTypes}
             addTile={this.addTile} />;
     }
+}
+
+GridContainer.propTypes = {
+    rows: PropTypes.number.isRequired,
+    cols: PropTypes.number.isRequired,
 }
 
 class Grid extends React.Component {
@@ -195,4 +199,9 @@ class Grid extends React.Component {
             </div>
         );
     }
+}
+
+Grid.propTypes = {
+    addTile: PropTypes.func.isRequired,
+    roadTileTypes: PropTypes.array.isRequired,
 }

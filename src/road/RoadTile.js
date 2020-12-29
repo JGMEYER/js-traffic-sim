@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import './RoadTile.css';
 
 export const RoadTileType = {
@@ -35,4 +37,8 @@ export function RoadTile(props) {
             <div className={`road-tile road-tile${props.type}`}></div>
         </div>
     );
+}
+
+RoadTile.propTypes = {
+    type: PropTypes.number.isRequired,
 }
