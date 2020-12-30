@@ -2,8 +2,8 @@
 
 .grid-wrapper {
     display: grid;
-    grid-template-columns: repeat(var(--grid-width), var(--tile-width));
-    grid-template-rows: repeat(var(--grid-height), var(--tile-height));
+    grid-template-columns: repeat(var(--grid-width), var(--tile-width-px));
+    grid-template-rows: repeat(var(--grid-height), var(--tile-height-px));
 }
 
 .grid-tile {

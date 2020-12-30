@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { Line } from 'react-lineto';
 
 import '../common/common.css';
 import { Direction } from '../common/common';
@@ -18,25 +20,51 @@ export class TravelNode {
 
         // Calculate (x, y)
 
+        // Pull variables from .css
         const style = getComputedStyle(document.documentElement);
-        const gridWidth = style.getPropertyValue('--grid-width');
-        const gridHeight = style.getPropertyValue('--grid-height');
+        const tileWidth = style.getPropertyValue('--tile-width-raw');
+        const tileHeight = style.getPropertyValue('--tile-height-raw');
 
-        const topX = col * gridWidth;
-        const topY = row * gridHeight;
+        // Find middle location of tile
+        const topX = col * tileWidth;
+        const topY = row * tileHeight;
+        const middleX = topX + .50 * tileWidth;
+        const middleY = topY + .50 * tileHeight;
 
-        const middleX = topX + .50 * gridWidth;
-        const middleY = topY + .50 * gridHeight;
+        // Set node (x, y) to middle of tile
+        this.x = middleX;
+        this.y = middleY;
 
-        // Shift node based on direction
-        const xDirModifier = Direction.LEFT ? -1 : (Direction.RIGHT ? 1 : 0);
-        const yDirModifier = Direction.UP ? -1 : (Direction.DOWN ? 1 : 0);
-
-        // Shift node based on type
-        // TODO...
-
-        this.x = middleX + .25 * gridWidth * xDirModifier;
-        this.y = middleY + .25 * gridHeight * yDirModifier;
+        // Shift node (x, y) based on properties
+        if (this.direction === Direction.UP) {
+            this.y -= tileHeight / 4;
+            if (this.travelNodeType === TravelNodeType.ENTER) {
+                this.x -= tileWidth / 8;
+            } else if (this.travelNodeType === TravelNodeType.EXIT) {
+                this.x += tileWidth / 8;
+            }
+        } else if (this.direction === Direction.RIGHT) {
+            this.x += tileWidth / 4;
+            if (this.travelNodeType === TravelNodeType.ENTER) {
+                this.y -= tileHeight / 8;
+            } else if (this.travelNodeType === TravelNodeType.EXIT) {
+                this.y += tileHeight / 8;
+            }
+        } else if (this.direction === Direction.DOWN) {
+            this.y += tileHeight / 4;
+            if (this.travelNodeType === TravelNodeType.ENTER) {
+                this.x += tileWidth / 8;
+            } else if (this.travelNodeType === TravelNodeType.EXIT) {
+                this.x -= tileWidth / 8;
+            }
+        } else if (this.direction === Direction.LEFT) {
+            this.x -= tileWidth / 4;
+            if (this.travelNodeType === TravelNodeType.ENTER) {
+                this.y += tileHeight / 8;
+            } else if (this.travelNodeType === TravelNodeType.EXIT) {
+                this.y -= tileHeight / 8;
+            }
+        }
     }
 }
 
@@ -47,15 +75,35 @@ export class TravelEdge extends React.Component {
 
     render() {
         return (
-            <div></div>
+            <Line
+                x0={this.props.exitNode.x}
+                y0={this.props.exitNode.y}
+                x1={this.props.enterNode.x}
+                y1={this.props.enterNode.y} />
         );
     }
 }
 
+TravelEdge.propTypes = {
+    exitNode: PropTypes.object.isRequired,
+    enterNode: PropTypes.object.isRequired,
+}
+
 export class TravelGraph extends React.Component {
     render() {
-        const exitNode = new TravelNode(1, 1, Direction.DOWN, TravelNodeType.EXIT);
-        const enterNode = new TravelNode(2, 1, Direction.UP, TravelNodeType.ENTER);
-        return <TravelEdge exitNode={exitNode} enterNode={enterNode} />
+        // Example only
+        return (
+            <div>
+                <TravelEdge
+                    exitNode={new TravelNode(1, 1, Direction.DOWN, TravelNodeType.EXIT)}
+                    enterNode={new TravelNode(2, 1, Direction.UP, TravelNodeType.ENTER)} />
+                <TravelEdge
+                    exitNode={new TravelNode(2, 1, Direction.RIGHT, TravelNodeType.EXIT)}
+                    enterNode={new TravelNode(2, 1, Direction.UP, TravelNodeType.ENTER)} />
+                <TravelEdge
+                    exitNode={new TravelNode(2, 1, Direction.RIGHT, TravelNodeType.EXIT)}
+                    enterNode={new TravelNode(2, 2, Direction.LEFT, TravelNodeType.ENTER)} />
+            </div>
+        );
     }
 }

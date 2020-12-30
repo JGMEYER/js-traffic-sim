@@ -23,8 +23,8 @@
     position: absolute;
     top: 0px;
     left: 0px;
-    width: var(--tile-width);
-    height: var(--tile-height);
+    width: var(--tile-width-px);
+    height: var(--tile-height-px);
 }
 
 /* EMPTY */
