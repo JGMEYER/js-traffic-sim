@@ -5,55 +5,59 @@ import './Grid.css';
 import { RoadTile, RoadTileType } from './RoadTile';
 import { Direction } from '../common/common';
 
-export class GridContainer extends React.Component {
-    constructor(props) {
-        super(props);
-
-        const roadTileTypes = new Array(props.rows);
-        for (let r = 0; r < props.rows; r++) {
-            roadTileTypes[r] = new Array(props.cols);
-        }
-        for (let r = 0; r < props.rows; r++) {
-            for (let c = 0; c < props.cols; c++) {
-                roadTileTypes[r][c] = RoadTileType.EMPTY;
+export class RoadTileMatrix {
+    constructor(rows, cols, innerArray) {
+        // If no array provided, populate it.
+        if (!innerArray) {
+            innerArray = new Array(rows);
+            for (let r = 0; r < rows; r++) {
+                innerArray[r] = new Array(cols);
             }
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    innerArray[r][c] = RoadTileType.EMPTY;
+                }
+            }
+
+            // Instantiate starting road
+            const middleRow = Math.floor(rows / 2)
+            const middleCol = Math.floor(cols / 2);
+            innerArray[middleRow][middleCol] = RoadTileType.ALONE;
         }
 
-        const middleRow = Math.floor(props.rows / 2)
-        const middleCol = Math.floor(props.cols / 2);
-        roadTileTypes[middleRow][middleCol] = RoadTileType.ALONE;
+        this.rows = rows;
+        this.cols = cols;
+        this.innerArray = innerArray;
+    }
 
-        this.state = {
-            roadTileTypes: roadTileTypes,
-        }
-
-        this.addTile = this.addTile.bind(this);
+    get(r, c) {
+        return this.innerArray[r][c];
     }
 
     getNeighbors(r, c) {
         const neighbors = {};
-        if (r - 1 >= 0 && this.state.roadTileTypes[r - 1][c] !== RoadTileType.EMPTY) {
+        if (r - 1 >= 0 && this.innerArray[r - 1][c] !== RoadTileType.EMPTY) {
             neighbors[Direction.UP] = {
                 coords: [r - 1, c],
-                type: this.state.roadTileTypes[r - 1][c],
+                type: this.innerArray[r - 1][c],
             }
         }
-        if (c + 1 < this.props.cols && this.state.roadTileTypes[r][c + 1] !== RoadTileType.EMPTY) {
+        if (c + 1 < this.cols && this.innerArray[r][c + 1] !== RoadTileType.EMPTY) {
             neighbors[Direction.RIGHT] = {
                 coords: [r, c + 1],
-                type: this.state.roadTileTypes[r][c + 1],
+                type: this.innerArray[r][c + 1],
             }
         }
-        if (r + 1 < this.props.rows && this.state.roadTileTypes[r + 1][c] !== RoadTileType.EMPTY) {
+        if (r + 1 < this.rows && this.innerArray[r + 1][c] !== RoadTileType.EMPTY) {
             neighbors[Direction.DOWN] = {
                 coords: [r + 1, c],
-                type: this.state.roadTileTypes[r + 1][c],
+                type: this.innerArray[r + 1][c],
             }
         }
-        if (c - 1 >= 0 && this.state.roadTileTypes[r][c - 1] !== RoadTileType.EMPTY) {
+        if (c - 1 >= 0 && this.innerArray[r][c - 1] !== RoadTileType.EMPTY) {
             neighbors[Direction.LEFT] = {
                 coords: [r, c - 1],
-                type: this.state.roadTileTypes[r][c - 1],
+                type: this.innerArray[r][c - 1],
             }
         }
         return neighbors;
@@ -65,7 +69,7 @@ export class GridContainer extends React.Component {
 
         // Optimization: don't update empty spaces unless we recently added a
         // tile there.
-        if (!wasAdded && this.state.roadTileTypes[r][c] === RoadTileType.EMPTY) {
+        if (!wasAdded && this.innerArray[r][c] === RoadTileType.EMPTY) {
             return RoadTileType.EMPTY;
         }
 
@@ -117,70 +121,57 @@ export class GridContainer extends React.Component {
         }
     }
 
-    updateTileType(r, c, wasAdded) {
-        // Supposedly a good-practice way to update an array in state
-        let roadTileTypesCopy = [...this.state.roadTileTypes];
-        roadTileTypesCopy[r][c] = this.evaluateRoadTileType(r, c, wasAdded);
-        this.setState({ roadTileTypes: roadTileTypesCopy });
+    updateTile(r, c, wasAdded) {
+        this.innerArray[r][c] = this.evaluateRoadTileType(r, c, wasAdded)
     }
 
     addTile(r, c, restrict_to_neighbors) {
         /* Add tile to grid
         restrict_to_neighbors - only allow road to be placed next to an
                                 existing tile */
-        if (this.state.roadTileTypes[r][c] !== RoadTileType.EMPTY) {
+        if (this.innerArray[r][c] !== RoadTileType.EMPTY) {
             return false;
         }
         if (restrict_to_neighbors && !Object.keys(this.getNeighbors(r, c)).length) {
             return false;
         }
 
-        this.updateTileType(r, c, true);
+        this.updateTile(r, c, true);
 
         if (r - 1 >= 0) {
-            this.updateTileType(r - 1, c, false);
+            this.updateTile(r - 1, c, false);
         }
-        if (c + 1 < this.props.cols) {
-            this.updateTileType(r, c + 1, false);
+        if (c + 1 < this.cols) {
+            this.updateTile(r, c + 1, false);
         }
-        if (r + 1 < this.props.rows) {
-            this.updateTileType(r + 1, c, false);
+        if (r + 1 < this.rows) {
+            this.updateTile(r + 1, c, false);
         }
         if (c - 1 >= 0) {
-            this.updateTileType(r, c - 1, false);
+            this.updateTile(r, c - 1, false);
         }
 
         return true;
     }
-
-    render() {
-        return <Grid
-            roadTileTypes={this.state.roadTileTypes}
-            addTile={this.addTile} />;
-    }
 }
 
-GridContainer.propTypes = {
-    rows: PropTypes.number.isRequired,
-    cols: PropTypes.number.isRequired,
-}
-
-class Grid extends React.Component {
+export class Grid extends React.Component {
     mouseDownHandler(e, r, c) {
-        this.props.addTile(r, c, true);
+        this.props.addTile(r, c);
     }
 
     mouseOverHandler({ buttons }, r, c) {
         if (buttons === 1) {
-            this.props.addTile(r, c, true)
+            this.props.addTile(r, c)
         }
     }
 
     render() {
         const roadTileDivs = []
-        let rows = this.props.roadTileTypes.length;
+        let rows = this.props.roadTileMatrix.rows;
+        let cols = this.props.roadTileMatrix.cols;
+
         for (let r = 0; r < rows; r++) {
-            let cols = this.props.roadTileTypes[r].length;
             for (let c = 0; c < cols; c++) {
                 roadTileDivs.push((
                     <div
@@ -188,7 +179,7 @@ class Grid extends React.Component {
                         className='grid-tile'
                         onMouseDown={(e) => this.mouseDownHandler(e, r, c)}
                         onMouseOver={(e) => this.mouseOverHandler(e, r, c)} >
-                        <RoadTile type={this.props.roadTileTypes[r][c]} />
+                        <RoadTile type={this.props.roadTileMatrix.get(r, c)} />
                     </div >
                 ));
             }
@@ -202,6 +193,6 @@ class Grid extends React.Component {
 }
 
 Grid.propTypes = {
+    roadTileMatrix: PropTypes.object.isRequired,
     addTile: PropTypes.func.isRequired,
-    roadTileTypes: PropTypes.array.isRequired,
 }
