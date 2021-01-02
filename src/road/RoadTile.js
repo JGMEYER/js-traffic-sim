@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { Direction } from '../common/common';
 import './RoadTile.css';
 
 export const RoadTileType = {
@@ -29,6 +30,45 @@ export const RoadTileType = {
     UP_RIGHT_DOWN_LEFT: 16,  //  ╬
 };
 Object.freeze(RoadTileType);
+
+export function getSegmentDirectionsForRoadTileType(roadTileType) {
+    switch (roadTileType) {
+        case RoadTileType.EMPTY:
+            return [];
+        case RoadTileType.ALONE:
+            return [];
+        case RoadTileType.UP:
+            return [Direction.UP];
+        case RoadTileType.RIGHT:
+            return [Direction.RIGHT];
+        case RoadTileType.DOWN:
+            return [Direction.DOWN];
+        case RoadTileType.LEFT:
+            return [Direction.LEFT];
+        case RoadTileType.UP_RIGHT:
+            return [Direction.UP, Direction.RIGHT];
+        case RoadTileType.RIGHT_DOWN:
+            return [Direction.RIGHT, Direction.DOWN];
+        case RoadTileType.DOWN_LEFT:
+            return [Direction.DOWN, Direction.LEFT];
+        case RoadTileType.UP_LEFT:
+            return [Direction.UP, Direction.LEFT];
+        case RoadTileType.UP_DOWN:
+            return [Direction.UP, Direction.DOWN];
+        case RoadTileType.RIGHT_LEFT:
+            return [Direction.RIGHT, Direction.LEFT];
+        case RoadTileType.UP_RIGHT_DOWN:
+            return [Direction.UP, Direction.RIGHT, Direction.DOWN];
+        case RoadTileType.RIGHT_DOWN_LEFT:
+            return [Direction.RIGHT, Direction.DOWN, Direction.LEFT];
+        case RoadTileType.UP_DOWN_LEFT:
+            return [Direction.UP, Direction.DOWN, Direction.LEFT];
+        case RoadTileType.UP_RIGHT_LEFT:
+            return [Direction.UP, Direction.RIGHT, Direction.LEFT];
+        case RoadTileType.UP_RIGHT_DOWN_LEFT:
+            return [Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT];
+    }
+}
 
 export function RoadTile(props) {
     return (

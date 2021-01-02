@@ -7,7 +7,8 @@ export const Direction = {
 Object.freeze(Direction);
 
 export const oppositeDirection = (dir) => {
-    switch (dir) {
+    const dirInt = parseInt(dir)
+    switch (dirInt) {
         case Direction.UP:
             return Direction.DOWN;
         case Direction.RIGHT:

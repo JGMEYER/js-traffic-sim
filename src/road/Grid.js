@@ -18,11 +18,6 @@ export class RoadTileMatrix {
                     innerArray[r][c] = RoadTileType.EMPTY;
                 }
             }
-
-            // Instantiate starting road
-            const middleRow = Math.floor(rows / 2)
-            const middleCol = Math.floor(cols / 2);
-            innerArray[middleRow][middleCol] = RoadTileType.ALONE;
         }
 
         this.rows = rows;
@@ -157,12 +152,12 @@ export class RoadTileMatrix {
 
 export class Grid extends React.Component {
     mouseDownHandler(e, r, c) {
-        this.props.addTile(r, c);
+        this.props.addRoad(r, c, true);
     }
 
     mouseOverHandler({ buttons }, r, c) {
         if (buttons === 1) {
-            this.props.addTile(r, c)
+            this.props.addRoad(r, c, true)
         }
     }
 
@@ -194,5 +189,5 @@ export class Grid extends React.Component {
 
 Grid.propTypes = {
     roadTileMatrix: PropTypes.object.isRequired,
-    addTile: PropTypes.func.isRequired,
+    addRoad: PropTypes.func.isRequired,
 }
