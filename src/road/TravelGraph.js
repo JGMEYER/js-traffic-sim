@@ -179,10 +179,8 @@ export class TravelGraph {
 
             const nInsct = this.intersections[[nR, nC]];
 
-            let exit, enter;
-            let nExit, nEnter;
-            [exit, enter] = insct.getNodesForSegment(nDirection);
-            [nExit, nEnter] = nInsct.getNodesForSegment(oppositeDirection(nDirection));
+            const [exit, enter] = insct.getNodesForSegment(nDirection);
+            const [nExit, nEnter] = nInsct.getNodesForSegment(oppositeDirection(nDirection));
 
             this._addEdge(exit, nEnter);
             this._addEdge(nExit, enter);
@@ -212,8 +210,7 @@ export class TravelGraph {
         if (segmentDirections.length === 1) {
             // Only one segment. Connect the two nodes, so vehicles can make a
             // U-Turn at dead-ends.
-            let exit, enter;
-            [exit, enter] = insct.getNodesForSegment(segmentDirections[0]);
+            const [exit, enter] = insct.getNodesForSegment(segmentDirections[0]);
             this._addEdge(exit, enter);
 
         } else {
@@ -244,8 +241,7 @@ export class TravelGraph {
         // We don't know which one was newly added, so go through each segment
         // and try removing any self-connections
         insct.getSegmentDirections().forEach(direction => {
-            let exit, enter;
-            [exit, enter] = insct.getNodesForSegment(direction);
+            const [exit, enter] = insct.getNodesForSegment(direction);
             this._removeEdge(exit, enter);
         });
 
