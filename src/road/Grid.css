@@ -13,6 +13,10 @@
     vertical-align: middle;
 }
 
+.grid-tile:nth-child(even) {
+    background-color: #cff3f3;
+}
+
 .grid-tile:hover {
     /* add inner border */
     box-sizing: border-box;
