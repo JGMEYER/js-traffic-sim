@@ -1,22 +1,39 @@
+import PropTypes from 'prop-types';
+
 import './Vehicle.css';
+import { getRandomInt } from '../common/common';
 
 export class Vehicle {
     constructor(id, x, y) {
         this.id = id;
         this.x = x;
         this.y = y;
+        this.color = this.randomColor();
     }
+
+    randomColor() {
+        const r = getRandomInt(100, 255);
+        const g = getRandomInt(100, 255);
+        const b = getRandomInt(100, 255);
+        return `rgb(${r}, ${g}, ${b})`;
+    };
 }
 
 export function VehicleComponent(props) {
     return (
         <div
-            key={`vehicle${props.id}`}
             className="vehicle"
             style={{
                 top: `${props.y}px`,
                 left: `${props.x}px`,
+                backgroundColor: `${props.color}`,
             }} >
         </div >
     );
+}
+
+VehicleComponent.propTypes = {
+    x: PropTypes.number.isRequired,
+    y: PropTypes.number.isRequired,
+    color: PropTypes.string.isRequired,
 }

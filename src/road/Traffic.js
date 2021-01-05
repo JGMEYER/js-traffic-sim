@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { Vehicle, VehicleComponent } from './Vehicle';
 
 export class Traffic {
+    static count = 0;
+
     constructor(vehicles) {
         this.vehicles = vehicles;
     }
@@ -16,14 +18,15 @@ export class Traffic {
 }
 
 export function TrafficComponent(props) {
-    console.log(props.traffic.vehicles);
     return (
         <div>
             {props.traffic.vehicles.map(vehicle =>
                 <VehicleComponent
+                    key={`vehicle-component${vehicle.id}`}
                     id={vehicle.id}
                     x={vehicle.x}
-                    y={vehicle.y} />
+                    y={vehicle.y}
+                    color={vehicle.color} />
             )}
         </div>
     );
