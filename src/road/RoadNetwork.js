@@ -61,8 +61,13 @@ export class RoadNetwork extends React.Component {
         const travelGraph = this.state.travelGraph;
         return (
             <div>
-                <Grid roadTileMatrix={roadTileMatrix} addRoad={addRoad} />
-                <TravelGraphComponent globalSettings={globalSettings} travelGraph={travelGraph} />
+                <Grid
+                    globalSettings={globalSettings}
+                    roadTileMatrix={roadTileMatrix}
+                    addRoad={addRoad} />
+                <TravelGraphComponent
+                    globalSettings={globalSettings}
+                    travelGraph={travelGraph} />
             </div>
         );
     };

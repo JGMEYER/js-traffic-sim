@@ -10,8 +10,16 @@ const cols = 25;
 
 function App() {
   const [globalSettings, setGlobalSettings] = useState({
+    displayRoadTileDescriptors: false,
     displayTravelEdges: false,
   });
+
+  const setDisplayRoadTileDescriptors = (displayRoadTileDescriptors) => {
+    setGlobalSettings({
+      ...globalSettings,
+      displayRoadTileDescriptors,
+    });
+  }
 
   const setDisplayTravelEdges = (displayTravelEdges) => {
     setGlobalSettings({
@@ -27,6 +35,7 @@ function App() {
         rows={rows}
         cols={cols} />
       <GlobalSettingsForm
+        setDisplayRoadTileDescriptors={setDisplayRoadTileDescriptors}
         setDisplayTravelEdges={setDisplayTravelEdges}
       />
     </div>

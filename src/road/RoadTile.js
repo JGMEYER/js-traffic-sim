@@ -73,12 +73,13 @@ export function getSegmentDirectionsForRoadTileType(roadTileType) {
 export function RoadTile(props) {
     return (
         <div>
-            <p className='road-tile-descriptor'>{props.type}</p>
+            <p className='road-tile-descriptor'>{props.displayRoadTileDescriptor ? props.type : ''}</p>
             <div className={`road-tile road-tile${props.type}`}></div>
-        </div>
+        </div >
     );
 }
 
 RoadTile.propTypes = {
+    displayRoadTileDescriptor: PropTypes.bool.isRequired,
     type: PropTypes.number.isRequired,
 }

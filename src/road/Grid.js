@@ -162,9 +162,12 @@ export class Grid extends React.Component {
     }
 
     render() {
+        const globalSettings = this.props.globalSettings;
+        const roadTileMatrix = this.props.roadTileMatrix;
+        const rows = roadTileMatrix.rows;
+        const cols = roadTileMatrix.cols;
+
         const roadTileDivs = []
-        let rows = this.props.roadTileMatrix.rows;
-        let cols = this.props.roadTileMatrix.cols;
 
         for (let r = 0; r < rows; r++) {
             for (let c = 0; c < cols; c++) {
@@ -174,7 +177,9 @@ export class Grid extends React.Component {
                         className='grid-tile'
                         onMouseDown={(e) => this.mouseDownHandler(e, r, c)}
                         onMouseOver={(e) => this.mouseOverHandler(e, r, c)} >
-                        <RoadTile type={this.props.roadTileMatrix.get(r, c)} />
+                        <RoadTile
+                            displayRoadTileDescriptor={globalSettings.displayRoadTileDescriptors}
+                            type={roadTileMatrix.get(r, c)} />
                     </div >
                 ));
             }
@@ -188,6 +193,7 @@ export class Grid extends React.Component {
 }
 
 Grid.propTypes = {
+    globalSettings: PropTypes.object.isRequired,
     roadTileMatrix: PropTypes.object.isRequired,
     addRoad: PropTypes.func.isRequired,
 }
