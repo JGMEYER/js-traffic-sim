@@ -280,23 +280,29 @@ TravelEdge.propTypes = {
 export class TravelGraphComponent extends React.Component {
     render() {
         const travelGraph = this.props.travelGraph;
-        // TODO This is bad. Relies too much on the inner workings of the graph
-        return (
-            <div>
-                {travelGraph.getEdges().map((edge, idx) => {
-                    const exitNode = travelGraph.getNode(edge.source);
-                    const enterNode = travelGraph.getNode(edge.target);
-                    return (
-                        <TravelEdge
-                            key={`travel-edge-${exitNode.id}-${enterNode.id}`}
-                            exitNode={exitNode} enterNode={enterNode} />
-                    );
-                })}
-            </div>
-        );
+        const globalSettings = this.props.globalSettings;
+        if (globalSettings.displayTravelEdges) {
+            // TODO This is bad. Relies too much on the inner workings of the graph
+            return (
+                <div>
+                    {travelGraph.getEdges().map((edge, idx) => {
+                        const exitNode = travelGraph.getNode(edge.source);
+                        const enterNode = travelGraph.getNode(edge.target);
+                        return (
+                            <TravelEdge
+                                key={`travel-edge-${exitNode.id}-${enterNode.id}`}
+                                exitNode={exitNode} enterNode={enterNode} />
+                        );
+                    })}
+                </div>
+            );
+        } else {
+            return <div></div>;
+        }
     }
 }
 
 TravelGraphComponent.propTypes = {
+    globalSettings: PropTypes.object.isRequired,
     travelGraph: PropTypes.object.isRequired,
 };

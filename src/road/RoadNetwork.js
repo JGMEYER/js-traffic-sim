@@ -55,16 +55,21 @@ export class RoadNetwork extends React.Component {
     }
 
     render() {
+        const roadTileMatrix = this.state.roadTileMatrix;
+        const addRoad = this.addRoad;
+        const globalSettings = this.props.globalSettings;
+        const travelGraph = this.state.travelGraph;
         return (
             <div>
-                <Grid roadTileMatrix={this.state.roadTileMatrix} addRoad={this.addRoad} />
-                <TravelGraphComponent travelGraph={this.state.travelGraph} />
+                <Grid roadTileMatrix={roadTileMatrix} addRoad={addRoad} />
+                <TravelGraphComponent globalSettings={globalSettings} travelGraph={travelGraph} />
             </div>
         );
     };
 }
 
 RoadNetwork.propTypes = {
+    globalSettings: PropTypes.object.isRequired,
     rows: PropTypes.number.isRequired,
     cols: PropTypes.number.isRequired,
 }
