@@ -21,7 +21,7 @@ export function GlobalSettingsForm(props) {
                     onChange={handleDisplayRoadTileDescriptorsChanged}
                 >
                 </input>
-                <label for="road-tile-descriptors">Tile Descriptors</label>
+                <label htmlFor="road-tile-descriptors">Tile Descriptors</label>
                 <br />
                 <input
                     type="checkbox"
@@ -30,7 +30,7 @@ export function GlobalSettingsForm(props) {
                     onChange={handleDisplayTravelEdgesChanged}
                 >
                 </input>
-                <label for="travel-edges">Travel Edges</label>
+                <label htmlFor="travel-edges">Travel Edges</label>
             </form>
         </div>
     );
