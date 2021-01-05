@@ -190,7 +190,15 @@ export class TravelGraph {
     }
 
     _addEdge(exit, enter) {
-        // This graph implementation only allows string nodes
+        // Note: This graph implementation only allows string nodes
+
+        // Ignore if edge already exists
+        const exitAdjacentNodes = this.graph.adjacent(exit.id.toString());
+        const edgeAlreadyExists = exitAdjacentNodes.indexOf(enter.id.toString()) !== -1;
+        if (edgeAlreadyExists) {
+            return;
+        }
+
         this.graph.addEdge(exit.id.toString(), enter.id.toString());
         // Create way to reference these nodes later
         this.nodes[exit.id.toString()] = exit;
@@ -198,7 +206,8 @@ export class TravelGraph {
     }
 
     _removeEdge(exit, enter) {
-        // This graph implementation only allows string nodes
+        // Note: This graph implementation only allows string nodes
+
         this.graph.removeEdge(exit.id.toString(), enter.id.toString());
         // TODO for proper removal, remove nodes from this.nodes if
         // indegree and outdegree length === 0
@@ -251,12 +260,14 @@ export class TravelGraph {
 
 export class TravelEdge extends React.Component {
     render() {
+        const exitNode = this.props.exitNode;
+        const enterNode = this.props.enterNode;
         return (
             <Line
-                x0={this.props.exitNode.x}
-                y0={this.props.exitNode.y}
-                x1={this.props.enterNode.x}
-                y1={this.props.enterNode.y} />
+                x0={exitNode.x}
+                y0={exitNode.y}
+                x1={enterNode.x}
+                y1={enterNode.y} />
         );
     }
 }
@@ -275,7 +286,11 @@ export class TravelGraphComponent extends React.Component {
                 {travelGraph.getEdges().map((edge, idx) => {
                     const exitNode = travelGraph.getNode(edge.source);
                     const enterNode = travelGraph.getNode(edge.target);
-                    return <TravelEdge exitNode={exitNode} enterNode={enterNode} />
+                    return (
+                        <TravelEdge
+                            key={`travel-edge-${exitNode.id}-${enterNode.id}`}
+                            exitNode={exitNode} enterNode={enterNode} />
+                    );
                 })}
             </div>
         );
