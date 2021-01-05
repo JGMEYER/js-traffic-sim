@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types';
 
 import { RoadTileMatrix, Grid } from './Grid';
+import { Traffic, TrafficComponent } from './Traffic';
 import { TravelGraph, TravelGraphComponent } from './TravelGraph';
 
 export class RoadNetwork extends React.Component {
@@ -14,6 +15,7 @@ export class RoadNetwork extends React.Component {
         this.state = {
             roadTileMatrix: new RoadTileMatrix(rows, cols, null),
             travelGraph: new TravelGraph(null, null, null),
+            traffic: new Traffic([]),
         };
 
         const middleRow = Math.floor(rows / 2)
@@ -36,6 +38,12 @@ export class RoadNetwork extends React.Component {
         const neighbors = this.state.roadTileMatrix.getNeighbors(r, c);
         this.state.travelGraph.registerTravelIntersection(r, c, roadTileType, neighbors);
 
+        // Add vehicle to random node
+        const randNode = this._getRandomTravelNode();
+        if (randNode) {
+            this.state.traffic.addVehicle(randNode);
+        }
+
         // Force any re-renders from changed RoadTileMatrix
         const rows = this.props.rows;
         const cols = this.props.cols;
@@ -48,10 +56,22 @@ export class RoadNetwork extends React.Component {
         const intersections = this.state.travelGraph.intersections;
         const newTravelGraph = new TravelGraph(graph, nodes, intersections);
 
+        // Force any re-renders from changed Traffic
+        const vehicles = this.state.traffic.vehicles;
+        const newTraffic = new Traffic(vehicles);
+
         this.setState({
             roadTileMatrix: newRoadTileMatrix,
             travelGraph: newTravelGraph,
+            traffic: newTraffic,
         });
+    }
+
+    _getRandomTravelNode() {
+        const nodes = this.state.travelGraph.nodes;
+        const randNodeIdString = Math.floor(Math.random() * Object.keys(nodes).length);
+        const randNode = this.state.travelGraph.getNode(randNodeIdString);
+        return randNode;
     }
 
     render() {
@@ -59,6 +79,7 @@ export class RoadNetwork extends React.Component {
         const addRoad = this.addRoad;
         const globalSettings = this.props.globalSettings;
         const travelGraph = this.state.travelGraph;
+        const traffic = this.state.traffic;
         return (
             <div>
                 <Grid
@@ -68,6 +89,7 @@ export class RoadNetwork extends React.Component {
                 <TravelGraphComponent
                     globalSettings={globalSettings}
                     travelGraph={travelGraph} />
+                <TrafficComponent traffic={traffic} />
             </div>
         );
     };
