@@ -4,6 +4,7 @@ import { Line } from 'react-lineto';
 import Graph from 'graph-data-structure';
 
 import '../common/common.css';
+import './TravelGraph.css';
 import { Direction, oppositeDirection } from '../common/common';
 import { getSegmentDirectionsForRoadTileType } from './RoadTile';
 
@@ -149,8 +150,19 @@ export class TravelGraph {
         return this.nodes[idString];
     }
 
+    getNodes() {
+        return this.nodes;
+    }
+
     getEdges() {
         return this.graph.serialize().links;
+    }
+
+    getShortestPath(startNodeId, endNodeId) {
+        return this.graph.shortestPath(
+            startNodeId.toString(),
+            endNodeId.toString()
+        );
     }
 
     registerTravelIntersection(r, c, roadTileType, neighbors) {
@@ -200,6 +212,7 @@ export class TravelGraph {
         }
 
         this.graph.addEdge(exit.id.toString(), enter.id.toString());
+
         // Create way to reference these nodes later
         this.nodes[exit.id.toString()] = exit;
         this.nodes[enter.id.toString()] = enter;
@@ -220,7 +233,7 @@ export class TravelGraph {
             // Only one segment. Connect the two nodes, so vehicles can make a
             // U-Turn at dead-ends.
             const [exit, enter] = insct.getNodesForSegment(segmentDirections[0]);
-            this._addEdge(exit, enter);
+            this._addEdge(enter, exit);
 
         } else {
             // Connect segments' ENTER nodes to other segments' EXIT nodes
@@ -230,7 +243,7 @@ export class TravelGraph {
             insct.getEnterNodes().forEach(enter => {
                 insct.getExitNodes().forEach(exit => {
                     if (exit.direction !== enter.direction) {
-                        this._addEdge(exit, enter);
+                        this._addEdge(enter, exit);
                     }
                 })
             });
@@ -251,7 +264,7 @@ export class TravelGraph {
         // and try removing any self-connections
         insct.getSegmentDirections().forEach(direction => {
             const [exit, enter] = insct.getNodesForSegment(direction);
-            this._removeEdge(exit, enter);
+            this._removeEdge(enter, exit);
         });
 
         this._intraconnectRoads(insct);
@@ -263,11 +276,22 @@ export class TravelEdge extends React.Component {
         const exitNode = this.props.exitNode;
         const enterNode = this.props.enterNode;
         return (
-            <Line
-                x0={exitNode.x}
-                y0={exitNode.y}
-                x1={enterNode.x}
-                y1={enterNode.y} />
+            <div>
+                <p
+                    className="node-label"
+                    style={{
+                        top: `${exitNode.y}px`,
+                        left: `${exitNode.x}px`,
+                    }}
+                >
+                    {exitNode.id}
+                </p>
+                <Line
+                    x0={exitNode.x}
+                    y0={exitNode.y}
+                    x1={enterNode.x}
+                    y1={enterNode.y} />
+            </div >
         );
     }
 }

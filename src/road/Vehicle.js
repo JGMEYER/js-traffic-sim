@@ -9,6 +9,7 @@ export class Vehicle {
         this.x = x;
         this.y = y;
         this.color = this.randomColor();
+        this.path = [];
     }
 
     randomColor() {
@@ -17,6 +18,25 @@ export class Vehicle {
         const b = getRandomInt(100, 255);
         return `rgb(${r}, ${g}, ${b})`;
     };
+
+    getPath(path) {
+        return this.path;
+    }
+
+    setPath(path) {
+        this.path = path;
+    }
+
+    step(nodes) {
+        if (this.path.length <= 0) {
+            return;
+        }
+
+        const targetId = this.path.shift();
+        const targetNode = nodes[targetId];
+        this.x = targetNode.x;
+        this.y = targetNode.y;
+    }
 }
 
 export function VehicleComponent(props) {

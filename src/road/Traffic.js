@@ -13,8 +13,14 @@ export class Traffic {
         const id = Traffic.count++;
         const x = travelNode.x;
         const y = travelNode.y;
-        this.vehicles.push(new Vehicle(id, x, y));
+        const vehicle = new Vehicle(id, x, y);
+        this.vehicles.push(vehicle);
+        return vehicle;
     };
+
+    step(nodes) {
+        this.vehicles.forEach(vehicle => vehicle.step(nodes));
+    }
 }
 
 export function TrafficComponent(props) {

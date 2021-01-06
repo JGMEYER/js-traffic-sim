@@ -1,1 +1,10 @@
 @import "../common/common.css";
+
+.node-label {
+    position: absolute;
+    font-size: 8px;
+    margin: -4px -4px;
+    z-index: 4;
+    background-color: white;
+    opacity: 0.6;
+}
