@@ -16,10 +16,8 @@ export class Vehicle {
     }
 
     randomColor() {
-        const r = getRandomInt(100, 255);
-        const g = getRandomInt(100, 255);
-        const b = getRandomInt(100, 255);
-        return `rgb(${r}, ${g}, ${b})`;
+        const h = getRandomInt(0, 359);
+        return `hsl(${h}, 100%, 75%)`;
     };
 
     getPath(path) {
