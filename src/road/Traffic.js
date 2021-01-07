@@ -13,7 +13,7 @@ export class Traffic {
         const id = Traffic.count++;
         const x = travelNode.x;
         const y = travelNode.y;
-        const vehicle = new Vehicle(id, x, y);
+        const vehicle = new Vehicle(id, x, y, travelNode.id);
         this.vehicles.push(vehicle);
         return vehicle;
     };

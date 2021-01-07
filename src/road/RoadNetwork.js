@@ -29,7 +29,7 @@ export class RoadNetwork extends React.Component {
         const step = this.step.bind(this);
         this.intervalId = setInterval(function () {
             step();
-        }, 100);
+        }, 120);
     }
 
     componentWillUnmount() {
@@ -37,7 +37,7 @@ export class RoadNetwork extends React.Component {
     }
 
     step() {
-        this.state.traffic.step(this.state.travelGraph.getNodes());
+        this.state.traffic.step(this.state.travelGraph);
 
         // Force any re-renders from changed Traffic
         const vehicles = this.state.traffic.vehicles;
@@ -62,15 +62,9 @@ export class RoadNetwork extends React.Component {
         this.state.travelGraph.registerTravelIntersection(r, c, roadTileType, neighbors);
 
         // Add vehicle to random node
-        const randNode = this._getRandomTravelNode();
+        const randNode = this.state.travelGraph.getRandomNode();
         if (randNode) {
             const vehicle = this.state.traffic.addVehicle(randNode);
-            const randTargetNode = this._getRandomTravelNode();
-            const path = this.state.travelGraph.getShortestPath(
-                randNode.id,
-                randTargetNode.id
-            );
-            vehicle.setPath(path);
         }
 
         // Force any re-renders from changed RoadTileMatrix
@@ -94,13 +88,6 @@ export class RoadNetwork extends React.Component {
             travelGraph: newTravelGraph,
             traffic: newTraffic,
         });
-    }
-
-    _getRandomTravelNode() {
-        const nodes = this.state.travelGraph.nodes;
-        const randNodeIdString = Math.floor(Math.random() * Object.keys(nodes).length);
-        const randNode = this.state.travelGraph.getNode(randNodeIdString);
-        return randNode;
     }
 
     render() {

@@ -154,6 +154,12 @@ export class TravelGraph {
         return this.nodes;
     }
 
+    getRandomNode() {
+        const randNodeIdString = Math.floor(Math.random() * Object.keys(this.nodes).length);
+        const randNode = this.getNode(randNodeIdString);
+        return randNode;
+    }
+
     getEdges() {
         return this.graph.serialize().links;
     }

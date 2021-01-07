@@ -4,12 +4,13 @@ import './Vehicle.css';
 import { getRandomInt } from '../common/common';
 
 export class Vehicle {
-    constructor(id, x, y) {
+    constructor(id, x, y, startNodeId) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.color = this.randomColor();
         this.path = [];
+        this.prevTargetId = startNodeId;
     }
 
     randomColor() {
@@ -27,13 +28,21 @@ export class Vehicle {
         this.path = path;
     }
 
-    step(nodes) {
-        if (this.path.length <= 0) {
-            return;
+    _getRandomPath(travelGraph) {
+        const randTarget = travelGraph.getRandomNode();
+        return travelGraph.getShortestPath(this.prevTargetId, randTarget.id);
+    }
+
+    step(travelGraph) {
+        if (this.path.length === 0) {
+            const randPath = this._getRandomPath(travelGraph);
+            this.setPath(randPath);
         }
 
         const targetId = this.path.shift();
-        const targetNode = nodes[targetId];
+        const targetNode = travelGraph.getNode(targetId);
+
+        this.prevTargetId = parseInt(targetId);
         this.x = targetNode.x;
         this.y = targetNode.y;
     }
