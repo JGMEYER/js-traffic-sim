@@ -1,8 +1,7 @@
 .vehicle {
-    height: 7px;
-    width: 7px;
-    margin: -4px -4px;
+    height: 4px;
+    width: 8px;
+    margin: -2px -4px;
     background-color: #00ff00;
-    border-radius: 50%;
     position: absolute;
 }

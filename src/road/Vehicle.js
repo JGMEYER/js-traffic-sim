@@ -12,6 +12,7 @@ export class Vehicle {
         this.path = [];
         this.prevTargetId = startNodeId;
         this.speed = 5;
+        this.angleRad = 0;
     }
 
     randomColor() {
@@ -50,10 +51,11 @@ export class Vehicle {
         const distToNode = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 
         const speed = Math.min(this.speed, distToNode);
-        const angle = Math.atan2(dy, dx);
-        const xVelocity = speed * Math.cos(angle);
-        const yVelocity = speed * Math.sin(angle);
+        const angleRad = Math.atan2(dy, dx);
+        const xVelocity = speed * Math.cos(angleRad);
+        const yVelocity = speed * Math.sin(angleRad);
 
+        this.angleRad = angleRad;
         this.x += Math.floor(xVelocity);
         this.y += Math.floor(yVelocity);
 
@@ -92,6 +94,7 @@ export function VehicleComponent(props) {
                 top: `${props.y}px`,
                 left: `${props.x}px`,
                 backgroundColor: `${props.color}`,
+                transform: `rotate(${props.angleRad * (180 / Math.PI)}deg)`,
             }} >
         </div >
     );
@@ -100,5 +103,6 @@ export function VehicleComponent(props) {
 VehicleComponent.propTypes = {
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
+    angleRad: PropTypes.number.isRequired,
     color: PropTypes.string.isRequired,
 }

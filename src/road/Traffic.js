@@ -32,6 +32,7 @@ export function TrafficComponent(props) {
                     id={vehicle.id}
                     x={vehicle.x}
                     y={vehicle.y}
+                    angleRad={vehicle.angleRad}
                     color={vehicle.color} />
             )}
         </div>
