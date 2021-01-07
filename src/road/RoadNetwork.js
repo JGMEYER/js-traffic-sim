@@ -29,7 +29,7 @@ export class RoadNetwork extends React.Component {
         const step = this.step.bind(this);
         this.intervalId = setInterval(function () {
             step();
-        }, 120);
+        }, 75);
     }
 
     componentWillUnmount() {
@@ -62,9 +62,11 @@ export class RoadNetwork extends React.Component {
         this.state.travelGraph.registerTravelIntersection(r, c, roadTileType, neighbors);
 
         // Add vehicle to random node
-        const randNode = this.state.travelGraph.getRandomNode();
-        if (randNode) {
-            const vehicle = this.state.traffic.addVehicle(randNode);
+        if (Math.floor(Math.random() * 100) < 30) {
+            const randNode = this.state.travelGraph.getRandomNode();
+            if (randNode) {
+                const vehicle = this.state.traffic.addVehicle(randNode);
+            }
         }
 
         // Force any re-renders from changed RoadTileMatrix

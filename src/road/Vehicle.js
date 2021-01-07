@@ -11,7 +11,7 @@ export class Vehicle {
         this.color = this.randomColor();
         this.path = [];
         this.prevTargetId = startNodeId;
-        this.speed = 5;
+        this.speed = 3;
         this.angleRad = 0;
     }
 
@@ -56,8 +56,8 @@ export class Vehicle {
         const yVelocity = speed * Math.sin(angleRad);
 
         this.angleRad = angleRad;
-        this.x += Math.floor(xVelocity);
-        this.y += Math.floor(yVelocity);
+        this.x += xVelocity;
+        this.y += yVelocity;
 
         return remainingSpeed - speed;
     }
