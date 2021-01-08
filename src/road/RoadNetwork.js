@@ -62,7 +62,7 @@ export class RoadNetwork extends React.Component {
         this.state.travelGraph.registerTravelIntersection(r, c, roadTileType, neighbors);
 
         // Add vehicle to random node
-        if (Math.floor(Math.random() * 100) < 30) {
+        if (Math.floor(Math.random() * 100) < 40) {
             const randNode = this.state.travelGraph.getRandomNode();
             if (randNode) {
                 this.state.traffic.addVehicle(randNode);
