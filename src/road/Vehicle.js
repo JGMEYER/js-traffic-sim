@@ -18,7 +18,7 @@ export class Vehicle {
     randomColor() {
         const h = getRandomInt(0, 359);
         return `hsl(${h}, 100%, 75%)`;
-    };
+    }
 
     getPath(path) {
         return this.path;

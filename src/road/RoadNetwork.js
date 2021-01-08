@@ -65,7 +65,7 @@ export class RoadNetwork extends React.Component {
         if (Math.floor(Math.random() * 100) < 30) {
             const randNode = this.state.travelGraph.getRandomNode();
             if (randNode) {
-                const vehicle = this.state.traffic.addVehicle(randNode);
+                this.state.traffic.addVehicle(randNode);
             }
         }
 

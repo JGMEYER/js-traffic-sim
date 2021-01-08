@@ -67,6 +67,8 @@ export function getSegmentDirectionsForRoadTileType(roadTileType) {
             return [Direction.UP, Direction.RIGHT, Direction.LEFT];
         case RoadTileType.UP_RIGHT_DOWN_LEFT:
             return [Direction.UP, Direction.RIGHT, Direction.DOWN, Direction.LEFT];
+        default:
+            throw Error('Invalid road tile type');
     }
 }
 
