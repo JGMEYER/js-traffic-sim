@@ -12,7 +12,7 @@ export class Vehicle extends Rectangle {
         this.color = this.randomColor();
         this.path = [];
         this.prevTargetId = startNodeId;
-        this.speed = 3;
+        this.speedPerSec = 30;
 
         const xOffset = 6;
         const yOffset = 0;
@@ -48,10 +48,10 @@ export class Vehicle extends Rectangle {
 
         const distToNode = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 
-        const speed = Math.min(this.speed, distToNode);
+        const speedPerSec = Math.min(remainingSpeed, distToNode);
         const angleRad = Math.atan2(dy, dx);
-        const xVelocity = speed * Math.cos(angleRad);
-        const yVelocity = speed * Math.sin(angleRad);
+        const xVelocity = speedPerSec * Math.cos(angleRad);
+        const yVelocity = speedPerSec * Math.sin(angleRad);
 
         this.translate(xVelocity, yVelocity);
         this.rotateToAngleRad(angleRad);
@@ -59,17 +59,17 @@ export class Vehicle extends Rectangle {
         this.frontCollider.translate(xVelocity, yVelocity);
         this.frontCollider.rotateToAngleRad(this.angleRad);
 
-        return remainingSpeed - speed;
+        return remainingSpeed - speedPerSec;
     }
 
-    step(travelGraph) {
+    step(tickMillisec, travelGraph) {
         // No where else to go
         if (this.path.length === 0) {
             this.setRandomPath(travelGraph);
         }
 
         let targetNode = travelGraph.getNode(this.path[0])
-        let remainingSpeed = this.speed;
+        let remainingSpeed = this.speedPerSec * (tickMillisec / 1000);
 
         while (remainingSpeed > 0) {
             remainingSpeed = this._moveTowardsTarget(remainingSpeed, targetNode);

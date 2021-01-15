@@ -29,10 +29,10 @@ export class Traffic {
         return false;
     }
 
-    step(nodes) {
+    step(tickMillisec, travelGraph) {
         this.vehicles.forEach(vehicle => {
             if (!this._vehicleInCollision(vehicle)) {
-                vehicle.step(nodes)
+                vehicle.step(tickMillisec, travelGraph)
             }
         });
     }

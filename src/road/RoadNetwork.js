@@ -16,6 +16,7 @@ export class RoadNetwork extends React.Component {
             roadTileMatrix: new RoadTileMatrix(rows, cols, null),
             travelGraph: new TravelGraph(null, null, null),
             traffic: new Traffic([]),
+            lastTimeMillisec: Date.now(),
         };
 
         const middleRow = Math.floor(rows / 2)
@@ -29,7 +30,7 @@ export class RoadNetwork extends React.Component {
         const step = this.step.bind(this);
         this.intervalId = setInterval(function () {
             step();
-        }, 75);
+        }, 33); // ~ 30fps
     }
 
     componentWillUnmount() {
@@ -37,7 +38,9 @@ export class RoadNetwork extends React.Component {
     }
 
     step() {
-        this.state.traffic.step(this.state.travelGraph);
+        const curTimeMillisec = Date.now();
+        const tickMillisec = curTimeMillisec - this.state.lastTimeMillisec;
+        this.state.traffic.step(tickMillisec, this.state.travelGraph);
 
         // Force any re-renders from changed Traffic
         const vehicles = this.state.traffic.vehicles;
@@ -45,6 +48,7 @@ export class RoadNetwork extends React.Component {
         this.setState(prev => ({
             ...prev,
             traffic: newTraffic,
+            lastTimeMillisec: curTimeMillisec,
         }));
     }
 
@@ -85,11 +89,12 @@ export class RoadNetwork extends React.Component {
         const vehicles = this.state.traffic.vehicles;
         const newTraffic = new Traffic(vehicles);
 
-        this.setState({
+        this.setState(prev => ({
+            ...prev,
             roadTileMatrix: newRoadTileMatrix,
             travelGraph: newTravelGraph,
             traffic: newTraffic,
-        });
+        }));
     }
 
     render() {
