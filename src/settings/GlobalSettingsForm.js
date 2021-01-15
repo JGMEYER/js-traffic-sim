@@ -10,6 +10,10 @@ export function GlobalSettingsForm(props) {
         props.setDisplayTravelEdges(e.target.checked);
     }
 
+    const handleDisplayVehicleCollidersChanged = (e) => {
+        props.setDisplayVehicleColliders(e.target.checked);
+    }
+
     return (
         <div>
             <p>Debug Settings:</p>
@@ -31,11 +35,22 @@ export function GlobalSettingsForm(props) {
                 >
                 </input>
                 <label htmlFor="travel-edges">Travel Edges</label>
+                <br />
+                <input
+                    type="checkbox"
+                    id="vehicle-colliders"
+                    name="vehicle-colliders"
+                    onChange={handleDisplayVehicleCollidersChanged}
+                >
+                </input>
+                <label htmlFor="vehicle-colliders">Vehicle Colliders</label>
             </form>
         </div>
     );
 }
 
 GlobalSettingsForm.propTypes = {
+    setDisplayRoadTileDescriptors: PropTypes.func.isRequired,
     setDisplayTravelEdges: PropTypes.func.isRequired,
+    setDisplayVehicleColliders: PropTypes.func.isRequired,
 }

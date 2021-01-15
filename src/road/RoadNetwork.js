@@ -107,7 +107,10 @@ export class RoadNetwork extends React.Component {
                 <TravelGraphComponent
                     globalSettings={globalSettings}
                     travelGraph={travelGraph} />
-                <TrafficComponent traffic={traffic} />
+                <TrafficComponent
+                    globalSettings={globalSettings}
+                    traffic={traffic}
+                />
             </div>
         );
     };

@@ -1,27 +1,27 @@
 import PropTypes from 'prop-types';
 
 import './Vehicle.css';
+import { Rectangle, RectangleCollider, RectangleComponent } from '../collision/Rectangle';
 import { getRandomInt } from '../common/common';
 
-export class Vehicle {
+export class Vehicle extends Rectangle {
     constructor(id, x, y, startNodeId) {
+        super(x, y, 8, 4, 0, 0, 0);
+
         this.id = id;
-        this.x = x;
-        this.y = y;
         this.color = this.randomColor();
         this.path = [];
         this.prevTargetId = startNodeId;
         this.speed = 3;
-        this.angleRad = 0;
+
+        const xOffset = 6;
+        const yOffset = 0;
+        this.frontCollider = new RectangleCollider(x, y, 4, 2, this.angleRad, xOffset, yOffset);
     }
 
     randomColor() {
         const h = getRandomInt(0, 359);
         return `hsl(${h}, 100%, 75%)`;
-    }
-
-    getPath(path) {
-        return this.path;
     }
 
     setPath(path) {
@@ -39,8 +39,8 @@ export class Vehicle {
     }
 
     _moveTowardsTarget(remainingSpeed, targetNode) {
-        const x1 = this.x;
-        const y1 = this.y;
+        const x1 = this.centerX;
+        const y1 = this.centerY;
         const x2 = targetNode.x;
         const y2 = targetNode.y;
         const dx = x2 - x1;
@@ -53,9 +53,11 @@ export class Vehicle {
         const xVelocity = speed * Math.cos(angleRad);
         const yVelocity = speed * Math.sin(angleRad);
 
-        this.angleRad = angleRad;
-        this.x += xVelocity;
-        this.y += yVelocity;
+        this.translate(xVelocity, yVelocity);
+        this.rotateToAngleRad(angleRad);
+
+        this.frontCollider.translate(xVelocity, yVelocity);
+        this.frontCollider.rotateToAngleRad(this.angleRad);
 
         return remainingSpeed - speed;
     }
@@ -72,7 +74,7 @@ export class Vehicle {
         while (remainingSpeed > 0) {
             remainingSpeed = this._moveTowardsTarget(remainingSpeed, targetNode);
 
-            if (this.x === targetNode.x && this.y === targetNode.y) {
+            if (this.centerX === targetNode.x && this.centerY === targetNode.y) {
                 this.prevTargetId = parseInt(this.path.shift());
                 // Repopulate path if exhausted
                 if (this.path.length === 0) {
@@ -86,21 +88,23 @@ export class Vehicle {
 
 export function VehicleComponent(props) {
     return (
-        <div
-            className="vehicle"
-            style={{
-                top: `${props.y}px`,
-                left: `${props.x}px`,
-                backgroundColor: `${props.color}`,
-                transform: `rotate(${props.angleRad * (180 / Math.PI)}deg)`,
-            }} >
+        <div>
+            <RectangleComponent
+                rect={props.vehicle}
+                backgroundColor={props.vehicle.color}>
+            </RectangleComponent>
+            {props.globalSettings.displayVehicleColliders ?
+                <RectangleComponent
+                    rect={props.vehicle.frontCollider}
+                    backgroundColor='#f00'>
+                </RectangleComponent>
+                : <div></div>
+            }
         </div >
     );
 }
 
 VehicleComponent.propTypes = {
-    x: PropTypes.number.isRequired,
-    y: PropTypes.number.isRequired,
-    angleRad: PropTypes.number.isRequired,
-    color: PropTypes.string.isRequired,
+    globalSettings: PropTypes.object.isRequired,
+    vehicle: PropTypes.object.isRequired,
 }

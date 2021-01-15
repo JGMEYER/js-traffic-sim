@@ -12,6 +12,7 @@ function App() {
   const [globalSettings, setGlobalSettings] = useState({
     displayRoadTileDescriptors: false,
     displayTravelEdges: false,
+    displayVehicleColliders: false,
   });
 
   const setDisplayRoadTileDescriptors = (displayRoadTileDescriptors) => {
@@ -28,6 +29,13 @@ function App() {
     });
   }
 
+  const setDisplayVehicleColliders = (displayVehicleColliders) => {
+    setGlobalSettings({
+      ...globalSettings,
+      displayVehicleColliders,
+    })
+  }
+
   return (
     <div className="App">
       <RoadNetwork
@@ -37,6 +45,7 @@ function App() {
       <GlobalSettingsForm
         setDisplayRoadTileDescriptors={setDisplayRoadTileDescriptors}
         setDisplayTravelEdges={setDisplayTravelEdges}
+        setDisplayVehicleColliders={setDisplayVehicleColliders}
       />
     </div>
   );

@@ -18,8 +18,23 @@ export class Traffic {
         return vehicle;
     };
 
+    _vehicleInCollision(vehicle) {
+        for (const i in this.vehicles) {
+            if (this.vehicles[i] !== vehicle) {
+                if (vehicle.frontCollider.collidesWith(this.vehicles[i])) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     step(nodes) {
-        this.vehicles.forEach(vehicle => vehicle.step(nodes));
+        this.vehicles.forEach(vehicle => {
+            if (!this._vehicleInCollision(vehicle)) {
+                vehicle.step(nodes)
+            }
+        });
     }
 }
 
@@ -29,16 +44,14 @@ export function TrafficComponent(props) {
             {props.traffic.vehicles.map(vehicle =>
                 <VehicleComponent
                     key={`vehicle-component${vehicle.id}`}
-                    id={vehicle.id}
-                    x={vehicle.x}
-                    y={vehicle.y}
-                    angleRad={vehicle.angleRad}
-                    color={vehicle.color} />
+                    globalSettings={props.globalSettings}
+                    vehicle={vehicle} />
             )}
         </div>
     );
 }
 
 TrafficComponent.propTypes = {
+    globalSettings: PropTypes.object.isRequired,
     traffic: PropTypes.object.isRequired,
 }
