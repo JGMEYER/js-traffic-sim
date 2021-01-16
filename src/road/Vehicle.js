@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import './Vehicle.css';
 import { Rectangle, RectangleCollider, RectangleComponent } from '../collision/Rectangle';
 import { getRandomInt } from '../common/common';
+import { roadTileTypeIsIntersection } from './RoadTile';
+import { TravelNodeType } from './TravelGraph';
 
 export class Vehicle extends Rectangle {
     constructor(id, x, y, startNodeId) {
@@ -17,6 +19,9 @@ export class Vehicle extends Rectangle {
         const xOffset = 6;
         const yOffset = 0;
         this.frontCollider = new RectangleCollider(x, y, 4, 2, this.angleRad, xOffset, yOffset);
+
+        // Can be modified externally
+        this.waitingAtInsct = false;
     }
 
     randomColor() {
@@ -62,7 +67,14 @@ export class Vehicle extends Rectangle {
         return remainingSpeed - speedPerSec;
     }
 
-    step(tickMillisec, travelGraph) {
+    /**
+     * Move vehicle along path.
+     * @param {number} tickMillisec
+     * @param {TravelGraph} travelGraph
+     * @param {RoadTileMatrix} roadTileMatrix
+     * @param {function} addVehicleToInsct
+     */
+    step(tickMillisec, travelGraph, roadTileMatrix, addVehicleToInsct) {
         // No where else to go
         if (this.path.length === 0) {
             this.setRandomPath(travelGraph);
@@ -71,24 +83,43 @@ export class Vehicle extends Rectangle {
         let targetNode = travelGraph.getNode(this.path[0])
         let remainingSpeed = this.speedPerSec * (tickMillisec / 1000);
 
-        while (remainingSpeed > 0) {
+        while (!this.waitingAtInsct && remainingSpeed > 0) {
             remainingSpeed = this._moveTowardsTarget(remainingSpeed, targetNode);
 
             if (this.centerX === targetNode.x && this.centerY === targetNode.y) {
                 this.prevTargetId = parseInt(this.path.shift());
+
                 // Repopulate path if exhausted
                 if (this.path.length === 0) {
                     this.setRandomPath(travelGraph);
                 }
+
+                const prevTarget = travelGraph.getNode(this.prevTargetId.toString());
+                if (this._atInsct(roadTileMatrix, prevTarget)) {
+                    addVehicleToInsct(this, prevTarget);
+                    break;
+                }
+
                 targetNode = travelGraph.getNode(this.path[0]);
             }
         }
+    }
+
+    /**
+     * Checks whether a given node is within an Intersection.
+     * @param {RoadTileMatrix} roadTileMatrix
+     * @param {TravelNode} travelNode Travel node that may or may not be at insct
+     */
+    _atInsct(roadTileMatrix, travelNode) {
+        const roadTile = roadTileMatrix.get(travelNode.row, travelNode.col);
+        return roadTileTypeIsIntersection(roadTile)
+            && travelNode.travelNodeType === TravelNodeType.ENTER;
     }
 }
 
 export function VehicleComponent(props) {
     return (
-        <div>
+        <div onClick={(e) => console.log(props.vehicle)} >
             <RectangleComponent
                 rect={props.vehicle}
                 backgroundColor={props.vehicle.color}>

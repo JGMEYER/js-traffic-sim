@@ -72,6 +72,10 @@ export function getSegmentDirectionsForRoadTileType(roadTileType) {
     }
 }
 
+export function roadTileTypeIsIntersection(roadTileType) {
+    return getSegmentDirectionsForRoadTileType(roadTileType).length >= 3;
+}
+
 export function RoadTile(props) {
     return (
         <div>

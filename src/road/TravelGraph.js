@@ -154,6 +154,16 @@ export class TravelGraph {
         return this.nodes;
     }
 
+    getNewestNode() {
+        if (Object.keys(this.nodes).length === 0) {
+            return null;
+        }
+        const newestKey = Object.keys(this.nodes).reduce(
+            (a, b) => Number(a) > Number(b) ? a : b
+        );
+        return this.nodes[newestKey];
+    }
+
     getRandomNode() {
         const randNodeIdString = Math.floor(Math.random() * Object.keys(this.nodes).length);
         const randNode = this.getNode(randNodeIdString);

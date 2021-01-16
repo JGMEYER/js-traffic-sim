@@ -100,10 +100,6 @@ export class Rectangle {
 }
 
 export class RectangleCollider extends Rectangle {
-    constructor(centerX, centerY, w, h, angleRad, xOffset, yOffset) {
-        super(centerX, centerY, w, h, angleRad, xOffset, yOffset);
-    }
-
     _hasSeparatingAxis(a, b) {
         // test each side of a in turn:
         const sides = 4;

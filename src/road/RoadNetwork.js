@@ -1,124 +1,104 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types';
 
 import { RoadTileMatrix, Grid } from './Grid';
 import { Traffic, TrafficComponent } from './Traffic';
 import { TravelGraph, TravelGraphComponent } from './TravelGraph';
 
-export class RoadNetwork extends React.Component {
-    constructor(props) {
-        super(props);
+export function RoadNetwork(props) {
+    const [roadTileMatrix, setRoadTileMatrix] = useState(
+        new RoadTileMatrix(props.rows, props.cols, null)
+    )
+    const [travelGraph, setTravelGraph] = useState(
+        new TravelGraph(null, null, null)
+    )
+    const [traffic, setTraffic] = useState(
+        new Traffic([], {})
+    )
+    const [lastTimeMillisec, setLastTimeMillisec] = useState(Date.now());
 
-        const rows = this.props.rows;
-        const cols = this.props.cols;
+    // Initialize starting road tile
+    useEffect(() => {
+        const middleRow = Math.floor(props.rows / 2)
+        const middleCol = Math.floor(props.cols / 2);
+        addRoad(middleRow, middleCol, false);
+    }, []);
 
-        this.state = {
-            roadTileMatrix: new RoadTileMatrix(rows, cols, null),
-            travelGraph: new TravelGraph(null, null, null),
-            traffic: new Traffic([]),
-            lastTimeMillisec: Date.now(),
-        };
-
-        const middleRow = Math.floor(rows / 2)
-        const middleCol = Math.floor(cols / 2);
-        this.addRoad(middleRow, middleCol, false);
-
-        this.addRoad = this.addRoad.bind(this);
-    }
-
-    componentDidMount() {
-        const step = this.step.bind(this);
-        this.intervalId = setInterval(function () {
+    // Initialize step interval
+    useEffect(() => {
+        const intervalId = setInterval(() => {
             step();
-        }, 33); // ~ 30fps
-    }
+        }, 16); // ~30fps
+        return () => clearInterval(intervalId);
+    });
 
-    componentWillUnmount() {
-        clearInterval(this.intervalId);
-    }
-
-    step() {
+    function step() {
         const curTimeMillisec = Date.now();
-        const tickMillisec = curTimeMillisec - this.state.lastTimeMillisec;
-        this.state.traffic.step(tickMillisec, this.state.travelGraph);
+        const tickMillisec = curTimeMillisec - lastTimeMillisec;
+        traffic.step(tickMillisec, travelGraph, roadTileMatrix);
 
         // Force any re-renders from changed Traffic
-        const vehicles = this.state.traffic.vehicles;
-        const newTraffic = new Traffic(vehicles);
-        this.setState(prev => ({
-            ...prev,
-            traffic: newTraffic,
-            lastTimeMillisec: curTimeMillisec,
-        }));
+        const newTraffic = new Traffic(traffic.vehicles, traffic.inscts);
+        setTraffic(newTraffic);
+
+        setLastTimeMillisec(curTimeMillisec);
     }
 
-    addRoad(r, c, restrictToNeighbors) {
+    function addRoad(r, c, restrictToNeighbors) {
         // Try to add tile
-        const tileAdded = this.state.roadTileMatrix.addTile(r, c, restrictToNeighbors);
-
+        const tileAdded = roadTileMatrix.addTile(r, c, restrictToNeighbors);
         if (!tileAdded) {
             return;
         }
 
         // Update graph
-        const roadTileType = this.state.roadTileMatrix.get(r, c);
-        const neighbors = this.state.roadTileMatrix.getNeighbors(r, c);
-        this.state.travelGraph.registerTravelIntersection(r, c, roadTileType, neighbors);
+        const roadTileType = roadTileMatrix.get(r, c);
+        const neighbors = roadTileMatrix.getNeighbors(r, c);
+        travelGraph.registerTravelIntersection(r, c, roadTileType, neighbors);
 
-        // Add vehicle to random node
+        // Add vehicle to newest node with random chance
         if (Math.floor(Math.random() * 100) < 40) {
-            const randNode = this.state.travelGraph.getRandomNode();
-            if (randNode) {
-                this.state.traffic.addVehicle(randNode);
+            const newestNode = travelGraph.getNewestNode();
+            if (newestNode) {
+                traffic.addVehicle(newestNode);
             }
         }
 
         // Force any re-renders from changed RoadTileMatrix
-        const rows = this.props.rows;
-        const cols = this.props.cols;
-        const innerArray = this.state.roadTileMatrix.innerArray;
-        const newRoadTileMatrix = new RoadTileMatrix(rows, cols, innerArray);
+        const newRoadTileMatrix = new RoadTileMatrix(
+            props.rows,
+            props.cols,
+            roadTileMatrix.innerArray
+        );
+        setRoadTileMatrix(newRoadTileMatrix);
 
         // Force any re-renders from changed TravelGraph
-        const graph = this.state.travelGraph.graph;
-        const nodes = this.state.travelGraph.nodes;
-        const intersections = this.state.travelGraph.intersections;
+        const graph = travelGraph.graph;
+        const nodes = travelGraph.nodes;
+        const intersections = travelGraph.intersections;
         const newTravelGraph = new TravelGraph(graph, nodes, intersections);
+        setTravelGraph(newTravelGraph);
 
         // Force any re-renders from changed Traffic
-        const vehicles = this.state.traffic.vehicles;
-        const newTraffic = new Traffic(vehicles);
-
-        this.setState(prev => ({
-            ...prev,
-            roadTileMatrix: newRoadTileMatrix,
-            travelGraph: newTravelGraph,
-            traffic: newTraffic,
-        }));
+        const newTraffic = new Traffic(traffic.vehicles, traffic.inscts);
+        setTraffic(newTraffic);
     }
 
-    render() {
-        const roadTileMatrix = this.state.roadTileMatrix;
-        const addRoad = this.addRoad;
-        const globalSettings = this.props.globalSettings;
-        const travelGraph = this.state.travelGraph;
-        const traffic = this.state.traffic;
-        return (
-            <div>
-                <Grid
-                    globalSettings={globalSettings}
-                    roadTileMatrix={roadTileMatrix}
-                    addRoad={addRoad} />
-                <TravelGraphComponent
-                    globalSettings={globalSettings}
-                    travelGraph={travelGraph} />
-                <TrafficComponent
-                    globalSettings={globalSettings}
-                    traffic={traffic}
-                />
-            </div>
-        );
-    };
+    return (
+        <div>
+            <Grid
+                globalSettings={props.globalSettings}
+                roadTileMatrix={roadTileMatrix}
+                addRoad={addRoad} />
+            <TravelGraphComponent
+                globalSettings={props.globalSettings}
+                travelGraph={travelGraph} />
+            <TrafficComponent
+                globalSettings={props.globalSettings}
+                traffic={traffic}
+            />
+        </div>
+    );
 }
 
 RoadNetwork.propTypes = {
