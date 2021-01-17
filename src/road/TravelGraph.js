@@ -44,28 +44,28 @@ export class TravelNode {
 
         // Shift node (x, y) based on properties
         if (this.direction === Direction.UP) {
-            this.y -= tileHeight / 4;
+            this.y -= tileHeight / 3;
             if (this.travelNodeType === TravelNodeType.ENTER) {
                 this.x -= tileWidth / 8;
             } else if (this.travelNodeType === TravelNodeType.EXIT) {
                 this.x += tileWidth / 8;
             }
         } else if (this.direction === Direction.RIGHT) {
-            this.x += tileWidth / 4;
+            this.x += tileWidth / 3;
             if (this.travelNodeType === TravelNodeType.ENTER) {
                 this.y -= tileHeight / 8;
             } else if (this.travelNodeType === TravelNodeType.EXIT) {
                 this.y += tileHeight / 8;
             }
         } else if (this.direction === Direction.DOWN) {
-            this.y += tileHeight / 4;
+            this.y += tileHeight / 3;
             if (this.travelNodeType === TravelNodeType.ENTER) {
                 this.x += tileWidth / 8;
             } else if (this.travelNodeType === TravelNodeType.EXIT) {
                 this.x -= tileWidth / 8;
             }
         } else if (this.direction === Direction.LEFT) {
-            this.x -= tileWidth / 4;
+            this.x -= tileWidth / 3;
             if (this.travelNodeType === TravelNodeType.ENTER) {
                 this.y += tileHeight / 8;
             } else if (this.travelNodeType === TravelNodeType.EXIT) {
