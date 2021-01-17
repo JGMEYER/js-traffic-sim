@@ -84,7 +84,12 @@ export class Vehicle extends Rectangle {
         let remainingSpeed = this.speedPerSec * (tickMillisec / 1000);
 
         while (!this.waitingAtInsct && remainingSpeed > 0) {
-            remainingSpeed = this._moveTowardsTarget(remainingSpeed, targetNode);
+            // Prevent glitch where a vehicle will rotate unusually after
+            // approaching its target node and starting a new path.
+            if (this.prevTargetId !== targetNode.id) {
+                // Move vehicle towards target
+                remainingSpeed = this._moveTowardsTarget(remainingSpeed, targetNode);
+            }
 
             if (this.centerX === targetNode.x && this.centerY === targetNode.y) {
                 this.prevTargetId = parseInt(this.path.shift());
