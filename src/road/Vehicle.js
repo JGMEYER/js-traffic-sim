@@ -62,7 +62,9 @@ export class Vehicle extends Rectangle {
         this.rotateToAngleRad(angleRad);
 
         this.frontCollider.translate(xVelocity, yVelocity);
-        this.frontCollider.rotateToAngleRad(this.angleRad);
+        this.frontCollider.rotateToAngleRad(angleRad);
+
+        this.angleRad = angleRad;
 
         return remainingSpeed - speedPerSec;
     }
