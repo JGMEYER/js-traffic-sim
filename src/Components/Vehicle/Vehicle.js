@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 
 import './Vehicle.css';
-import { Rectangle, RectangleCollider, RectangleComponent } from '../collision/Rectangle';
-import { getRandomInt } from '../common/common';
-import { roadTileTypeIsIntersection } from './RoadTile';
-import { TravelNodeType } from './TravelGraph';
+import { Rectangle, RectangleCollider, RectangleComponent } from '../../util/collision/Rectangle';
+import { roadTileTypeIsIntersection } from '../RoadTile/RoadTile';
+import { TravelNodeType } from '../TravelGraph/TravelGraph';
+import { getRandomInt } from '../../util/Random';
 
 export class Vehicle extends Rectangle {
     constructor(id, x, y, startNodeId) {

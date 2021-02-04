@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 
-import { Intersection } from './Intersection';
-import { Vehicle, VehicleComponent } from './Vehicle';
+import { Intersection } from '../Intersection/Intersection';
+import { Vehicle, VehicleComponent } from '../Vehicle/Vehicle';
 
 /**
  * Handles movement of all vehicles and intersection logic.

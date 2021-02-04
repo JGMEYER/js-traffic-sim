@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import './Grid.css';
-import { RoadTile, RoadTileType } from './RoadTile';
-import { Direction } from '../common/common';
+import { RoadTile, RoadTileType } from '../RoadTile/RoadTile';
+import { Direction } from '../../util/Direction';
 
 export class RoadTileMatrix {
     constructor(rows, cols, innerArray) {

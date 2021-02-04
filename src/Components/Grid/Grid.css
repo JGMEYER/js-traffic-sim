@@ -1,5 +1,3 @@
-@import "../common/common.css";
-
 .grid-wrapper {
     display: grid;
     grid-template-columns: repeat(var(--grid-width), var(--tile-width-px));

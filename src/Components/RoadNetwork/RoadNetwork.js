@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types';
 
-import { RoadTileMatrix, Grid } from './Grid';
-import { Traffic, TrafficComponent } from './Traffic';
-import { TravelGraph, TravelGraphComponent } from './TravelGraph';
+import { RoadTileMatrix, Grid } from '../Grid/Grid';
+import { Traffic, TrafficComponent } from '../Traffic/Traffic';
+import { TravelGraph, TravelGraphComponent } from '../TravelGraph/TravelGraph';
 
 export function RoadNetwork(props) {
     const [roadTileMatrix, setRoadTileMatrix] = useState(

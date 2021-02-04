@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import './App.css';
-import { RoadNetwork } from './road/RoadNetwork';
+import { RoadNetwork } from './Components/RoadNetwork/RoadNetwork';
 import { GlobalSettingsForm } from './settings/GlobalSettingsForm';
 
 // For now, make sure to update with common.css

@@ -1,4 +1,4 @@
-import { Direction } from '../common/common';
+import { Direction } from '../../util/Direction';
 
 const CLEAR_TIME_DURATION = 1000; // ms
 const WAIT_TIME_DURATION = 1000; // ms

@@ -21,7 +21,3 @@ export const oppositeDirection = (dir) => {
             throw new Error('Unknown direction provided');
     }
 };
-
-export const getRandomInt = (min, max) => {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-};

@@ -3,10 +3,9 @@ import PropTypes from 'prop-types';
 import { Line } from 'react-lineto';
 import Graph from 'graph-data-structure';
 
-import '../common/common.css';
 import './TravelGraph.css';
-import { Direction, oppositeDirection } from '../common/common';
-import { getSegmentDirectionsForRoadTileType } from './RoadTile';
+import { getSegmentDirectionsForRoadTileType } from '../RoadTile/RoadTile';
+import { Direction, oppositeDirection } from '../../util/Direction';
 
 export const TravelNodeType = {
     ENTER: 0,
