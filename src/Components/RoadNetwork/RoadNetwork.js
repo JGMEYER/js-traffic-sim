@@ -27,7 +27,11 @@ export function RoadNetwork(props) {
     // Initialize step interval
     useEffect(() => {
         const intervalId = setInterval(() => {
-            step();
+            if (document.hasFocus()) {
+                step();
+            } else {
+                setLastTimeMillisec(Date.now());
+            }
         }, 16); // ~30fps
         return () => clearInterval(intervalId);
     });
