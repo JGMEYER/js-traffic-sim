@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Line } from 'react-lineto';
-import Graph from 'graph-data-structure';
 
 import './TravelGraph.css';
 import { getSegmentDirectionsForRoadTileType } from '../RoadTile/RoadTile';
 import { Direction, oppositeDirection } from '../../util/Direction';
+import Graph from '../../util/Graph';
 
 export const TravelNodeType = {
     ENTER: 0,
@@ -145,8 +145,8 @@ export class TravelGraph {
         this.intersections = intersections || {};
     }
 
-    getNode(idString) {
-        return this.nodes[idString];
+    getNode(id) {
+        return this.nodes[id];
     }
 
     getNodes() {
@@ -170,14 +170,11 @@ export class TravelGraph {
     }
 
     getEdges() {
-        return this.graph.serialize().links;
+        return this.graph.serializeEdges();
     }
 
     getShortestPath(startNodeId, endNodeId) {
-        return this.graph.shortestPath(
-            startNodeId.toString(),
-            endNodeId.toString()
-        );
+        return this.graph.shortestPath(startNodeId, endNodeId);
     }
 
     registerTravelIntersection(r, c, roadTileType, neighbors) {
@@ -217,26 +214,15 @@ export class TravelGraph {
     }
 
     _addEdge(exit, enter) {
-        // Note: This graph implementation only allows string nodes
-
-        // Ignore if edge already exists
-        const exitAdjacentNodes = this.graph.adjacent(exit.id.toString());
-        const edgeAlreadyExists = exitAdjacentNodes.indexOf(enter.id.toString()) !== -1;
-        if (edgeAlreadyExists) {
-            return;
-        }
-
-        this.graph.addEdge(exit.id.toString(), enter.id.toString());
+        this.graph.addEdge(exit.id, enter.id);
 
         // Create way to reference these nodes later
-        this.nodes[exit.id.toString()] = exit;
-        this.nodes[enter.id.toString()] = enter;
+        this.nodes[exit.id] = exit;
+        this.nodes[enter.id] = enter;
     }
 
     _removeEdge(exit, enter) {
-        // Note: This graph implementation only allows string nodes
-
-        this.graph.removeEdge(exit.id.toString(), enter.id.toString());
+        this.graph.removeEdge(exit.id, enter.id);
         // TODO for proper removal, remove nodes from this.nodes if
         // indegree and outdegree length === 0
     }
@@ -324,7 +310,7 @@ export class TravelGraphComponent extends React.Component {
             // TODO This is bad. Relies too much on the inner workings of the graph
             return (
                 <div>
-                    {travelGraph.getEdges().map((edge, idx) => {
+                    {travelGraph.getEdges().map(edge => {
                         const exitNode = travelGraph.getNode(edge.source);
                         const enterNode = travelGraph.getNode(edge.target);
                         return (

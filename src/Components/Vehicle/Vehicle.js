@@ -101,7 +101,7 @@ export class Vehicle extends Rectangle {
                     this.setRandomPath(travelGraph);
                 }
 
-                const prevTarget = travelGraph.getNode(this.prevTargetId.toString());
+                const prevTarget = travelGraph.getNode(this.prevTargetId);
                 if (this._atInsct(roadTileMatrix, prevTarget)) {
                     addVehicleToInsct(this, prevTarget);
                     break;
