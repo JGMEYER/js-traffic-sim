@@ -20,7 +20,7 @@ export function RoadNetwork(props) {
     // Initialize step interval
     useEffect(() => {
         const intervalId = setInterval(() => {
-            if (document.hasFocus()) {
+            if (!document.hidden) {
                 step();
             } else {
                 setLastTimeMillisec(Date.now());
