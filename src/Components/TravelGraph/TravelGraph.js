@@ -163,10 +163,11 @@ export class TravelGraph {
         return this.nodes[newestKey];
     }
 
-    getRandomNode() {
-        const randNodeIdString = Math.floor(Math.random() * Object.keys(this.nodes).length);
-        const randNode = this.getNode(randNodeIdString);
-        return randNode;
+    getRandomNodeAlongPath(startNodeId) {
+        const possibleNodeIds = Array.from(this.graph.alongPath(startNodeId));
+        const randIdx = Math.floor(Math.random() * possibleNodeIds.length);
+        const nodeId = possibleNodeIds[randIdx];
+        return this.nodes[nodeId];
     }
 
     getEdges() {

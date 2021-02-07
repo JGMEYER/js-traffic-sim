@@ -39,7 +39,7 @@ export class Vehicle extends Rectangle {
     }
 
     _getRandomPath(travelGraph) {
-        const randTarget = travelGraph.getRandomNode();
+        const randTarget = travelGraph.getRandomNodeAlongPath(this.prevTargetId);
         return travelGraph.getShortestPath(this.prevTargetId, randTarget.id);
     }
 
