@@ -17,13 +17,6 @@ export function RoadNetwork(props) {
     )
     const [lastTimeMillisec, setLastTimeMillisec] = useState(Date.now());
 
-    // Initialize starting road tile
-    useEffect(() => {
-        const middleRow = Math.floor(props.rows / 2)
-        const middleCol = Math.floor(props.cols / 2);
-        addRoad(middleRow, middleCol, false);
-    }, []);
-
     // Initialize step interval
     useEffect(() => {
         const intervalId = setInterval(() => {
