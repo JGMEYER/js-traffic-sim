@@ -152,12 +152,12 @@ export class RoadTileMatrix {
 
 export class Grid extends React.Component {
     mouseDownHandler(e, r, c) {
-        this.props.addRoad(r, c, true);
+        this.props.addRoad(r, c, false);
     }
 
     mouseOverHandler({ buttons }, r, c) {
         if (buttons === 1) {
-            this.props.addRoad(r, c, true)
+            this.props.addRoad(r, c, false)
         }
     }
 
