@@ -88,6 +88,63 @@ export class Traffic {
             }
         });
     }
+
+    /**
+     * Vehicle exists at given RoadTile.
+     * @param {Vehicle} vehicle
+     * @param {number} row
+     * @param {number} col
+     * @returns {boolean}
+     */
+    vehicleIn(vehicle, r, c) {
+        // Pull variables from .css
+        const style = getComputedStyle(document.documentElement);
+        const tileWidth = Number(style.getPropertyValue('--tile-width-raw'));
+        const tileHeight = Number(style.getPropertyValue('--tile-height-raw'));
+
+        const x1 = tileWidth * c;
+        const y1 = tileHeight * r;
+        const x2 = x1 + tileWidth - 1;
+        const y2 = y1 + tileHeight - 1;
+
+        return (vehicle.centerX >= x1 && vehicle.centerX <= x2
+            && vehicle.centerY >= y1 && vehicle.centerY <= y2);
+    }
+
+    /**
+     * Removes Vehicles from RoadTile at given coordinate and all neighbors.
+     * @param {number} row
+     * @param {number} col
+     * @param {Object} neighbors
+     */
+    removeVehiclesNear(r, c, neighbors) {
+        this.removeVehiclesAt(r, c);
+        for (const direction in neighbors) {
+            const [nR, nC] = neighbors[direction].coords;
+            this.removeVehiclesAt(nR, nC);
+        }
+    }
+
+    /**
+     * Removes Vehicles from RoadTile at given coordinate.
+     * @param {number} row
+     * @param {number} col
+     */
+    removeVehiclesAt(r, c) {
+        this.vehicles = this.vehicles.filter(vehicle =>
+            !this.vehicleIn(vehicle, r, c)
+        );
+    }
+
+    /**
+     * Randomize path of all Vehicles using current TravelGraph state.
+     * @param {TravelGraph} travelGraph
+     */
+    rerandomizeAllVehiclePaths(travelGraph) {
+        this.vehicles.forEach(vehicle => {
+            vehicle.resetRandomPath(travelGraph);
+        });
+    }
 }
 
 export function TrafficComponent(props) {

@@ -72,6 +72,38 @@ class Graph {
     }
 
     /**
+     * Remove node grom graph, removing all edges into and out of the node and
+     * removing any orphaned nodes if any are created.
+     * @param {number} source
+     */
+    removeNode(source) {
+        this._checkIsPositiveInteger(source, 'source');
+
+        if (!this.edges.hasOwnProperty(source)) {
+            return;
+        }
+
+        // Remove node
+        delete this.edges[source];
+
+        // Remove references to node
+        for (let key in this.edges) {
+            key = Number(key);
+
+            // Remove indegree edges to node
+            const indexOf = this.edges[key].indexOf(source);
+            if (indexOf > -1) {
+                this.edges[key].splice(indexOf, 1);
+            }
+
+            // If node is now orphaned, remove
+            if (this.inDegree(key) === 0 && this.outDegree(key) === 0) {
+                delete this.edges[key]
+            }
+        }
+    }
+
+    /**
      * Computes number of incoming edges for specified node.
      * @param {number} source
      * @returns {number} inDegree

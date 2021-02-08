@@ -110,6 +110,10 @@ export class TravelIntersection {
             new TravelNode(this.row, this.col, direction, TravelNodeType.ENTER);
     }
 
+    removeTravelNodes(direction) {
+        delete this.nodes[direction];
+    }
+
     getSegmentDirections() {
         return Object.keys(this.nodes);
     }
@@ -143,6 +147,10 @@ export class TravelGraph {
         this.graph = graph || new Graph();
         this.nodes = nodes || {};
         this.intersections = intersections || {};
+    }
+
+    hasNode(id) {
+        return Object.keys(this.nodes).includes(String(id));
     }
 
     getNode(id) {
@@ -193,7 +201,7 @@ export class TravelGraph {
 
             const nInsct = this.intersections[[nR, nC]];
             nInsct.addTravelNodes(oppositeDirection(nDirection));
-            this._updateIntersectionIntraconnectedEdges(nInsct);
+            this._removeIntersectionIntraconnectedEdges(nInsct);
         }
 
         // Add edges between intersection and neighbor intersections
@@ -214,6 +222,29 @@ export class TravelGraph {
         this.intersections[[r, c]] = insct;
     }
 
+    unregisterTravelIntersection(r, c, neighbors) {
+        const insct = this.intersections[[r, c]];
+
+        for (const nDirection in neighbors) {
+            const [exit, enter] = insct.getNodesForSegment(nDirection);
+
+            const neighbor = neighbors[nDirection];
+            const [nR, nC] = neighbor.coords;
+            const nInsct = this.intersections[[nR, nC]];
+            const [nExit, nEnter] = nInsct.getNodesForSegment(oppositeDirection(nDirection));
+            this._removeNode(exit);
+            this._removeNode(enter);
+
+            nInsct.removeTravelNodes(oppositeDirection(nDirection));
+            this._removeNode(nExit);
+            this._removeNode(nEnter);
+
+            this._intraconnectRoads(nInsct);
+        }
+
+        delete this.intersections[[r, c]];
+    }
+
     _addEdge(exit, enter) {
         this.graph.addEdge(exit.id, enter.id);
 
@@ -226,6 +257,10 @@ export class TravelGraph {
         this.graph.removeEdge(exit.id, enter.id);
         // TODO for proper removal, remove nodes from this.nodes if
         // indegree and outdegree length === 0
+    }
+
+    _removeNode(node) {
+        this.graph.removeNode(node.id);
     }
 
     _intraconnectRoads(insct) {
@@ -259,8 +294,9 @@ export class TravelGraph {
      * Should only be used on existing intersections in the graph that have
      * been updated via a road adjacent to it, i.e. do not run this for newly
      * placed dead-end tiles.
+     * @param {TravelIntersection} insct
      */
-    _updateIntersectionIntraconnectedEdges(insct) {
+    _removeIntersectionIntraconnectedEdges(insct) {
         // Clear all self-connected edges from existing dead-end segments
         // We don't know which one was newly added, so go through each segment
         // and try removing any self-connections

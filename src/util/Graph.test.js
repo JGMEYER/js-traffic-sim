@@ -104,6 +104,26 @@ describe('Graph', () => {
         });
     });
 
+    describe('removeNode', () => {
+        test('nodes are removed correctly', () => {
+            const graph = new Graph();
+            graph.addEdge(0, 1);
+            graph.addEdge(1, 2);
+            graph.addEdge(1, 3);
+            graph.addEdge(2, 0);
+            graph.addEdge(4, 0);
+
+            graph.removeNode(3);
+            expect(graph.edges).toEqual({ 0: [1], 1: [2], 2: [0], 4: [0] });
+
+            graph.removeNode(2);
+            expect(graph.edges).toEqual({ 0: [1], 1: [], 4: [0] });
+
+            graph.removeNode(0);
+            expect(graph.edges).toEqual({});
+        });
+    });
+
     describe('inDegree', () => {
         test('can handle complex graphs', () => {
             // Visual representation at: http://i.stack.imgur.com/7C2kD.png

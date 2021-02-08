@@ -58,6 +58,10 @@ export class RoadTileMatrix {
         return neighbors;
     }
 
+    hasNeighbors(r, c) {
+        return Object.keys(this.getNeighbors(r, c)).length > 0;
+    }
+
     evaluateRoadTileType(r, c, wasAdded) {
         /* wasAdded: whether the road tile was newly added to the grid, i.e.
                      changed from RoadTileType.EMPTY */
@@ -116,48 +120,92 @@ export class RoadTileMatrix {
         }
     }
 
+    /**
+     * Update tile type.
+     * @param {number} row
+     * @param {number} col
+     * @param {boolean} wasAdded Whether the RoadTile was newly added to the
+     *                  grid, i.e. changed from RoadTileType.EMPTY.
+     */
     updateTile(r, c, wasAdded) {
         this.innerArray[r][c] = this.evaluateRoadTileType(r, c, wasAdded)
     }
 
-    addTile(r, c, restrict_to_neighbors) {
-        /* Add tile to grid
-        restrict_to_neighbors - only allow road to be placed next to an
-                                existing tile */
+    _updateNeighbors(r, c, wasAdded) {
+        if (r - 1 >= 0) {
+            this.updateTile(r - 1, c, wasAdded);
+        }
+        if (c + 1 < this.cols) {
+            this.updateTile(r, c + 1, wasAdded);
+        }
+        if (r + 1 < this.rows) {
+            this.updateTile(r + 1, c, wasAdded);
+        }
+        if (c - 1 >= 0) {
+            this.updateTile(r, c - 1, wasAdded);
+        }
+    }
+
+    /**
+     * Add tile.
+     * @param {number} row
+     * @param {number} col
+     * @param {boolean} restrictToNeighbors Tile must be placed next to another
+     *                  tile.
+     * @returns {boolean} Tile was added.
+     */
+    addTile(r, c, restrictToNeighbors) {
         if (this.innerArray[r][c] !== RoadTileType.EMPTY) {
             return false;
         }
-        if (restrict_to_neighbors && !Object.keys(this.getNeighbors(r, c)).length) {
+        if (restrictToNeighbors && !this.hasNeighbors(r, c)) {
             return false;
         }
-
         this.updateTile(r, c, true);
-
-        if (r - 1 >= 0) {
-            this.updateTile(r - 1, c, false);
-        }
-        if (c + 1 < this.cols) {
-            this.updateTile(r, c + 1, false);
-        }
-        if (r + 1 < this.rows) {
-            this.updateTile(r + 1, c, false);
-        }
-        if (c - 1 >= 0) {
-            this.updateTile(r, c - 1, false);
-        }
-
+        this._updateNeighbors(r, c, false);
         return true;
+    }
+
+    tileCanBeRemoved(r, c) {
+        return this.innerArray[r][c] !== RoadTileType.EMPTY;
+    }
+
+    /**
+     * Remove tile.
+     * @param {number} row
+     * @param {number} col
+     */
+    removeTile(r, c) {
+        this.innerArray[r][c] = RoadTileType.EMPTY;
+        this._updateNeighbors(r, c, false);
     }
 }
 
 export class Grid extends React.Component {
     mouseDownHandler(e, r, c) {
-        this.props.addRoad(r, c, false);
+        e.preventDefault();
+        switch (e.buttons) {
+            case 1:
+                this.props.addRoad(r, c, false);
+                break;
+            case 2:
+                this.props.removeRoad(r, c);
+                break;
+            default:
+                break;
+        }
     }
 
     mouseOverHandler({ buttons }, r, c) {
-        if (buttons === 1) {
-            this.props.addRoad(r, c, false)
+        switch (buttons) {
+            case 1:
+                this.props.addRoad(r, c, false);
+                break;
+            case 2:
+                this.props.removeRoad(r, c);
+                break;
+            default:
+                break;
         }
     }
 
@@ -176,7 +224,11 @@ export class Grid extends React.Component {
                         key={`grid-tile${r * cols + c}`}
                         className='grid-tile'
                         onMouseDown={(e) => this.mouseDownHandler(e, r, c)}
-                        onMouseOver={(e) => this.mouseOverHandler(e, r, c)} >
+                        onMouseOver={(e) => this.mouseOverHandler(e, r, c)}
+                        onContextMenu={
+                            /* disable right click context menu */
+                            (e) => e.preventDefault()
+                        }>
                         <RoadTile
                             displayRoadTileDescriptor={globalSettings.displayRoadTileDescriptors}
                             type={roadTileMatrix.get(r, c)} />
@@ -196,4 +248,5 @@ Grid.propTypes = {
     globalSettings: PropTypes.object.isRequired,
     roadTileMatrix: PropTypes.object.isRequired,
     addRoad: PropTypes.func.isRequired,
+    removeRoad: PropTypes.func.isRequired,
 }

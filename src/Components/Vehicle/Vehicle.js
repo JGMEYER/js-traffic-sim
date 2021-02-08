@@ -34,13 +34,26 @@ export class Vehicle extends Rectangle {
     }
 
     setRandomPath(travelGraph) {
-        const randPath = this._getRandomPath(travelGraph);
+        const randPath = this._getRandomPath(travelGraph, this.prevTargetId);
         this.setPath(randPath);
     }
 
-    _getRandomPath(travelGraph) {
-        const randTarget = travelGraph.getRandomNodeAlongPath(this.prevTargetId);
-        return travelGraph.getShortestPath(this.prevTargetId, randTarget.id);
+    resetRandomPath(travelGraph) {
+        if (travelGraph.hasNode(this.path[0])) {
+            // Continue routing to current target, then set new objective
+            const randPath = this._getRandomPath(travelGraph, this.path[0]);
+            this.setPath(randPath);
+        } else {
+            // Current target no longer exists, reroute based on prev target
+            const randPath = this._getRandomPath(travelGraph, this.prevTargetId);
+            this.prevTargetId = randPath.shift();
+            this.setPath(randPath);
+        }
+    }
+
+    _getRandomPath(travelGraph, startNodeId) {
+        const randTarget = travelGraph.getRandomNodeAlongPath(startNodeId);
+        return travelGraph.getShortestPath(startNodeId, randTarget.id);
     }
 
     _moveTowardsTarget(remainingSpeed, targetNode) {

@@ -5,6 +5,10 @@ import { RoadTileMatrix, Grid } from '../Grid/Grid';
 import { Traffic, TrafficComponent } from '../Traffic/Traffic';
 import { TravelGraph, TravelGraphComponent } from '../TravelGraph/TravelGraph';
 
+/**
+ * Main component for controlling the flow of the simulation.
+ * @param {Object} props
+ */
 export function RoadNetwork(props) {
     const [roadTileMatrix, setRoadTileMatrix] = useState(
         new RoadTileMatrix(props.rows, props.cols, null)
@@ -29,6 +33,9 @@ export function RoadNetwork(props) {
         return () => clearInterval(intervalId);
     });
 
+    /**
+     * Step Components in the road network a set amount of milliseconds.
+     */
     function step() {
         const curTimeMillisec = Date.now();
         const tickMillisec = curTimeMillisec - lastTimeMillisec;
@@ -41,6 +48,12 @@ export function RoadNetwork(props) {
         setLastTimeMillisec(curTimeMillisec);
     }
 
+    /**
+     * Add road and randomly generate vehicles.
+     * @param {number} row
+     * @param {number} col
+     * @param {boolean} restrictToNeighbors
+     */
     function addRoad(r, c, restrictToNeighbors) {
         // Try to add tile
         const tileAdded = roadTileMatrix.addTile(r, c, restrictToNeighbors);
@@ -61,7 +74,48 @@ export function RoadNetwork(props) {
             }
         }
 
-        // Force any re-renders from changed RoadTileMatrix
+        // Prevents strange behavior where vehicle could otherwise travel
+        // across TravelGraph edges that no longer exist.
+        traffic.rerandomizeAllVehiclePaths(travelGraph);
+
+        rerender();
+    }
+
+    /**
+     * Remove road and nearby vehicles.
+     * @param {number} r
+     * @param {number} c
+     */
+    function removeRoad(r, c) {
+        if (!roadTileMatrix.tileCanBeRemoved(r, c)) {
+            return;
+        }
+
+        const neighbors = roadTileMatrix.getNeighbors(r, c);
+
+        // Remove nearby vehicles
+        traffic.removeVehiclesNear(r, c, neighbors);
+
+        // Update graph
+        travelGraph.unregisterTravelIntersection(r, c, neighbors);
+
+        // Prevents error where vehicle could otherwise travel to TravelGraph
+        // nodes that no longer exist.
+        traffic.rerandomizeAllVehiclePaths(travelGraph);
+
+        // Try to remove tile
+        const tileRemoved = roadTileMatrix.removeTile(r, c);
+        if (!tileRemoved) {
+            return;
+        }
+
+        rerender();
+    }
+
+    /**
+     * Force rerender of any changed Components.
+     */
+    function rerender() {
         const newRoadTileMatrix = new RoadTileMatrix(
             props.rows,
             props.cols,
@@ -69,14 +123,12 @@ export function RoadNetwork(props) {
         );
         setRoadTileMatrix(newRoadTileMatrix);
 
-        // Force any re-renders from changed TravelGraph
         const graph = travelGraph.graph;
         const nodes = travelGraph.nodes;
         const intersections = travelGraph.intersections;
         const newTravelGraph = new TravelGraph(graph, nodes, intersections);
         setTravelGraph(newTravelGraph);
 
-        // Force any re-renders from changed Traffic
         const newTraffic = new Traffic(traffic.vehicles, traffic.inscts);
         setTraffic(newTraffic);
     }
@@ -86,7 +138,8 @@ export function RoadNetwork(props) {
             <Grid
                 globalSettings={props.globalSettings}
                 roadTileMatrix={roadTileMatrix}
-                addRoad={addRoad} />
+                addRoad={addRoad}
+                removeRoad={removeRoad} />
             <TravelGraphComponent
                 globalSettings={props.globalSettings}
                 travelGraph={travelGraph} />
