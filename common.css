@@ -1,0 +1,10 @@
+:root {
+    --grid-width: 25;
+    --grid-height: 10;
+    /* Separated for now to keep moving. Should later be based on each other
+       and exportable to html css and js. */
+    --tile-width-raw: 48;
+    --tile-height-raw: 48;
+    --tile-width-px: 48px; /* should match tile-width-raw */
+    --tile-height-px: 48px; /* should match tile-height-raw */
+}
